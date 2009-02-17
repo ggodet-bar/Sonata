@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sonata.framework.common.AbstractFactory;
+import org.sonata.framework.common.entity.EntityObjectProtocol.EntityObjectServices;
 
 /**
  * Classe abstraite de gestion des instances d'Objets Symphony. Tout Objet Symphony devra 
@@ -40,7 +41,7 @@ public abstract class AbstractEntityFactory extends AbstractFactory {
 	 * @param object l'objet à enregistrer auprès de la factory
 	 * @return l'identifiant de l'objet, -1 si l'ajout a généré une erreur
 	 */
-	protected int add(final EntityObject object) {
+	public int add(final EntityObject object) {
 		boolean successfullyAdded = false ;
 		int returnValue ;
 		if (!(isEntitySingleton && !listeInstances.isEmpty())) {
@@ -48,7 +49,8 @@ public abstract class AbstractEntityFactory extends AbstractFactory {
 		}
 		if (successfullyAdded) {
 			returnValue = listeInstances.indexOf(object) ;
-			object.setID(returnValue) ;
+			((EntityObjectServices)object).setID(returnValue) ;
+			((EntityObjectServices)object).setFactory(this) ;
 		} else {
 			returnValue = -1 ;
 		}

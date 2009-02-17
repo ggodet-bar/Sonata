@@ -8,7 +8,7 @@ import org.sonata.framework.common.entity.EntityObject;
 import org.sonata.framework.common.process.AbstractProcessFactory;
 import org.sonata.framework.control.invoker.Invoker;
 
-privileged aspect CommunicationOIOM {
+privileged public aspect CommunicationOIOM {
 	
 	@SuppressAjWarnings({"adviceDidNotMatch"})
 	after(AbstractEntityFactory factory) returning (Object e): execution(public Object AbstractEntityFactory.creerEntite()) && target(factory){

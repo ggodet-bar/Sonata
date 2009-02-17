@@ -11,9 +11,11 @@ import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.sonata.framework.common.*;
+import org.sonata.framework.common.ConnectionTranslation;
+import org.sonata.framework.common.SymphonyObject;
 import org.sonata.framework.common.entity.AbstractEntityFactory;
 import org.sonata.framework.common.entity.EntityObject;
+import org.sonata.framework.common.entity.EntityObjectProtocol.EntityObjectServices;
 import org.sonata.framework.common.process.AbstractProcessFactory;
 import org.sonata.framework.common.process.ProcessObject;
 import org.sonata.framework.control.exceptions.InvalidSOConnection;
@@ -208,13 +210,10 @@ public final class Invoker {
 			{
 				logger.fine("OSE " + studiedClass + " est valide") ;
 
-				
-				Class<AbstractEntityFactory> cla = (Class<AbstractEntityFactory>) classLoader.loadClass(classIName + "Factory") ;
 				// On vérifie que la factory appartient également à l'OME
 				// (doit implémenter EntityFactory)
-				boolean validFactory = false ;
-				validFactory = cla.getSuperclass().getName().matches("org.sonata.framework.common.entity.AbstractEntityFactory");
-
+				
+				boolean validFactory = ((EntityObjectServices)obj).getFactory() instanceof AbstractEntityFactory ;
 				if (validFactory)
 				{
 					List<EntityObject> objectList = oELookupTable.get(classInterface) ;
@@ -499,6 +498,9 @@ public final class Invoker {
 		
 		// TODO On valide la connexion entre source et target (une BrokerReference doit exister)
 		for (Class<?> singleInterface : source.getClass().getInterfaces()) {
+			// We get the interface name that should be that of the applicative services of the object
+			// TODO We could try to use annotations for identifying more easily the correct interface
+			// (i.e., in the current situation, a Symphony Object should not ever implement another interface)
 			if (!(singleInterface.getName().matches("common.process.ProcessObject") || 
 					singleInterface.getName().matches("common.entity.EntityObject") ||
 					singleInterface.getName().matches("interaction.common.Displayable"))) {

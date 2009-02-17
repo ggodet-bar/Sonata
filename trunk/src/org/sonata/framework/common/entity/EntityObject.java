@@ -13,7 +13,7 @@ public interface EntityObject extends SymphonyObject {
 	 * Renvoie l'identifiant de l'Objet Entité.
 	 * @return l'identifiant
 	 */
-	int getID() ;
+//	int getID() ;
 
 	/**
 	 * Définit l'identifiant de l'Objet Entité. Cet identifiant
@@ -23,5 +23,5 @@ public interface EntityObject extends SymphonyObject {
 	 * par une Factory !
 	 * @param identifier la valeur de l'identifiant
 	 */
-	void setID(int identifier);
+//	void setID(int identifier);
 }

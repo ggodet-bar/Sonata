@@ -10,7 +10,7 @@ import java.util.List;
  * @author godetg
  *
  */
-public abstract class AbstractFactory {
+public class AbstractFactory {
 	
 	/**
 	 * Instance unique de la factory. Cette dernière doit être redéfinie 
