@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aspectj>
+	<aspects>
+		<aspect name="org.sonata.framework.common.entity.EntityObjectProtocol"/>
+		<aspect name="org.sonata.framework.control.invoker.CommunicationOIOM"/>
+		<concrete-aspect name="org.sonata.framework.common.__MyPrecedence" 
+			precedence="org.sonata.framework.common.entity.EntityObjectProtocol, org.sonata.framework.control.invoker.CommunicationOIOM, *" />
+	</aspects>
+	<weaver options="-showWeaveInfo -verbose">
+    	<include within="business..*"/>
+    	<include within="interactional..*" />
+    </weaver>
+</aspectj>
