@@ -3,8 +3,6 @@ Sonata Framework Readme
 
 This lightweight framework connects components built following the Symphony modeling convention.
 
-* * *
-
 Features
 ---------
 
@@ -15,7 +13,6 @@ Features
 
 The original purpose of the framework is to cleanly separate UI components from the functional core by minimizing the coupling between those components. However, it could be used for dividing any set of components!
 
-* * *
 
 Generating the Sonata plugin
 ----------------------------
@@ -26,7 +23,6 @@ Generating the Sonata plugin
 4.	Type the following in your terminal:	`ant jar -Daspectjpath=<path_to_aspectj>`
 5.	If everything goes well, you should have a `.jar` file in the newly created `output` directory of your project: this is the Sonata plugin ready to roll!
 
-* * *
 
 Documents
 ----------
