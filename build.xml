@@ -1,0 +1,33 @@
+<project xmlns:aspectj="antlib:org.aspectj">
+	<property name="lib.dir" value="lib" />
+	<property name="version" value="0.8" />
+	
+	<taskdef 
+	      resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties"/>
+	
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar"/>
+		<fileset file="${aspectjpath}/lib/aspectjrt.jar" />
+	</path>
+	
+	<target name = "clean">
+		<delete dir = "bin" />
+		<delete dir = "output" />
+	</target>
+
+	<target name="compile">
+		<mkdir dir="bin" />
+		<aspectj:iajc srcdir="src" destDir="bin" classpathref="classpath" source="1.5" target="1.5"/>
+	</target>
+	
+	<target name="jar" depends="compile">
+		<mkdir dir="output" />
+		<tstamp />
+		<jar jarfile="output/org.sonata.framework_${version}.v${DSTAMP}.jar" basedir="bin/">
+			<manifest>
+				<attribute name="Class-Path" value="lib/jdom.jar" />
+			</manifest>
+		</jar>
+	</target>
+
+</project>

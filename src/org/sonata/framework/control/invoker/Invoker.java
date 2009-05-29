@@ -11,11 +11,12 @@ import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.sonata.framework.common.AbstractFactory;
 import org.sonata.framework.common.ConnectionTranslation;
 import org.sonata.framework.common.SymphonyObject;
 import org.sonata.framework.common.entity.AbstractEntityFactory;
 import org.sonata.framework.common.entity.EntityObject;
-import org.sonata.framework.common.entity.EntityObjectProtocol.EntityObjectServices;
+import org.sonata.framework.common.entity.EntityObjectServices;
 import org.sonata.framework.common.process.AbstractProcessFactory;
 import org.sonata.framework.common.process.ProcessObject;
 import org.sonata.framework.control.exceptions.InvalidSOConnection;
@@ -118,7 +119,7 @@ public final class Invoker {
 		
 	}
 	
-	public static Invoker newInstance() {
+	private static Invoker newInstance() {
 		synchronized(lock) {
 			if (instance == null)
 			{
@@ -186,7 +187,7 @@ public final class Invoker {
 
 	
 	// Vérifications de la cohérence, de la complétude etc.
-	public void register(final SymphonyObject obj) {
+	public void register(final SymphonyObject obj, AbstractFactory factory) {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader() ;
 		
 		String studiedClass = new String (obj.getClass().getName()) ;
@@ -197,24 +198,18 @@ public final class Invoker {
 		
 		
 		//		 Pour valider l'OME (ou l'OMP), celui-ci doit implémenter EntityObject (ProcessObject)
-		boolean validOME = false ;
-		boolean validOMP = false ;
 		try {
 			
 			classInterface = classLoader.loadClass(classIName);
-			
-			validOME = obj instanceof EntityObject ;
-			validOMP = obj instanceof ProcessObject ;
 		
-			if (validOME)
+			if (obj instanceof EntityObject)
 			{
 				logger.fine("OSE " + studiedClass + " est valide") ;
 
 				// On vérifie que la factory appartient également à l'OME
 				// (doit implémenter EntityFactory)
-				
-				boolean validFactory = ((EntityObjectServices)obj).getFactory() instanceof AbstractEntityFactory ;
-				if (validFactory)
+
+				if (factory instanceof AbstractEntityFactory)
 				{
 					List<EntityObject> objectList = oELookupTable.get(classInterface) ;
 					if (objectList == null) {
@@ -228,16 +223,14 @@ public final class Invoker {
 				else {
 					logger.warning("OSEFactory invalide : " + studiedClass) ;
 				}
-			} else if (validOMP) {
+			} else if (obj instanceof ProcessObject) {
 				// Mécanisme d'inscription de l'O(M/I)P
 				logger.fine("OSP " + studiedClass + " est valide") ;
-				Class<AbstractProcessFactory> cla = (Class<AbstractProcessFactory>) classLoader.loadClass(classIName + "Factory") ;
+				
 				
 				// On vérifie que la factory appartient également à l'OMP
 				// (doit implémenter ProcessFactory)
-				boolean validFactory = false ;
-				validFactory |= cla.getSuperclass().getName().matches("org.sonata.framework.common.process.AbstractProcessFactory") ;
-				if (validFactory)
+				if (factory instanceof AbstractProcessFactory)
 				{
 					List<ProcessObject> objectList = oPLookupTable.get(classInterface) ;
 					if (objectList == null) {

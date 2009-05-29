@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sonata.framework.common.AbstractFactory;
-import org.sonata.framework.common.entity.EntityObjectProtocol.EntityObjectServices;
+import org.sonata.framework.common.entity.EntityObjectServices;
 
 /**
  * Classe abstraite de gestion des instances d'Objets Symphony. Tout Objet Symphony devra 
@@ -60,11 +60,13 @@ public abstract class AbstractEntityFactory extends AbstractFactory {
 	/* (non-Javadoc)
 	 * @see org.sonata.framework.common.entity.test#supprimer(int)
 	 */
-	public void supprimer(final int identifiant) {
+	public boolean supprimer(final int identifiant) {
 		EntityObject temp = rechercher(identifiant) ;
+		boolean resultValue = false ;
 		if (temp != null) {
-			listeInstances.remove(temp);
+			resultValue = listeInstances.remove(temp);
 		}
+		return resultValue ;
 	}
 	
 	/* (non-Javadoc)

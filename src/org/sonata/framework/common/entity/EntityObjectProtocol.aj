@@ -4,13 +4,6 @@ public aspect EntityObjectProtocol {
 	
 	declare parents: (EntityObject+ && !EntityObject) implements EntityObjectServices ;
 
-	public interface EntityObjectServices {
-		public void setID(int id) ;
-		public int getID() ;
-		public AbstractEntityFactory getFactory() ;
-		public void setFactory(AbstractEntityFactory factory) ;
-	}
-
 	@SuppressWarnings("unused")	// Apparently an AspectJ bug
 	private int EntityObjectServices.identifier = -1 ;
 	@SuppressWarnings("unused") // Apparently an AspectJ bug

@@ -10,6 +10,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.sonata.framework.control.invoker.Invoker;
 
 // Cette classe implemente le pattern singleton. Sa tache consiste a recuperer les proprietes relatives
 // aux classes techniques, dans le fichier PropertiesXML.xml.
@@ -53,10 +54,10 @@ public abstract class AbstractInitializer {
 		}
 }
 	
-	private static String capitalize(String s) {
-        if (s.length() == 0) return s;
-        return s.substring(0, 1).toUpperCase() + s.substring(1);		
-	}
+//	private static String capitalize(String s) {
+//        if (s.length() == 0) return s;
+//        return s.substring(0, 1).toUpperCase() + s.substring(1);		
+//	}
 	
 	/**
 	 * Does all the initialization of technical classes
@@ -74,8 +75,14 @@ public abstract class AbstractInitializer {
 				// Recuperation de l'instance de chaque factory
 				String objectName = symphonyObject.getChildText("objectName") ;
 				String[] splitName = objectName.split("\\.") ;
-				String factoryName = capitalize(splitName[splitName.length - 1]) + "Factory" ;
-				String factoryPath = objectName + "." + factoryName ;
+				String factoryName = splitName[splitName.length - 1] + "Factory" ;
+				String objectPath = "" ;
+				for (int i = 0 ; i < splitName.length-1 ; i++) {
+					objectPath += splitName[i] + "." ;	// We get the path, except for the last part which needs to be reworked
+				}
+				objectPath += splitName[splitName.length - 1].toLowerCase() ;
+				
+				String factoryPath = objectPath + "." + factoryName ;
 				try {
 					Class<AbstractFactory> factoryClass = (Class<AbstractFactory>) (loader.loadClass(factoryPath)) ;
 					Field instanceField = factoryClass.getDeclaredField("instance") ;
@@ -107,4 +114,9 @@ public abstract class AbstractInitializer {
 	 */
 	public abstract void setupSOParameters() ;
 	
+	
+	public void setIsUnitTesting(boolean b) {
+		Invoker.instance.setUnitTesting(b);
+		
+	}
 }

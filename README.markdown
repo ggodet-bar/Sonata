@@ -12,13 +12,24 @@ The original purpose of the framework is to cleanly separate UI components from 
 
 * * *
 
+Generating the Sonata plugin
+----------------------------
+
+1.	Make sure you hava [Ant](ant.apache.org) and [AspectJ](http://eclipse.org/aspectj) installed. *Note that the AJDT plugin is not sufficient for building the plugin!*
+2.	Go to the root of your Sonata clone
+3.	Type the following in your terminal:	`ant jar -Daspectjpath=<path_to_aspectj>`
+4.	If everything goes well, you should have a `.jar` file in the newly created `output` directory of your project: this is the Sonata plugin ready to roll!
+
+* * *
+
 Setup Instructions
 ------------------
 
 There's a few things to fiddle with before you can use Sonata:
 
-1.	You need to have [JDom](http://www.jdom.org) and [AspectJ](http://eclipse.org/aspectj) installed.
-
+1.	You need to have [Ant](ant.apache.org), [JDom](http://www.jdom.org) and [AspectJ](http://eclipse.org/aspectj) installed.
+2.	Create a new project 
+2.	Add to your classpath both `jdom.jar` and the `aspectjrt.jar` (the latter can generally be found in your aspectj install directory)
 
 * * *
 
