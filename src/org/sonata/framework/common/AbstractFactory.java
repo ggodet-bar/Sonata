@@ -4,31 +4,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Classe abstraite de gestion des instances d'Objets Symphony. Tout Objet Symphony devra 
- * décrire une classe Factory étendant <code>AbstractEntityFactory</code>.
+ * Abstract class for managing Symphony Object instances. Every SO component should 
+ * integrate a Factory class that extends <code>AbstractEntityFactory</code>.
  * 
  * @author godetg
  *
  */
 public class AbstractFactory {
-	
+
 	/**
-	 * Instance unique de la factory. Cette dernière doit être redéfinie 
-	 * pour toutes les instances de <code>AbstractEntityFactory</code>.
+	 * Singleton instance of the factory. <b>It should be redefined by every 
+	 * instance of <code>AbstractEntityFactory</code>.
 	 */
 	public static AbstractFactory instance ;
 	
 	/**
-	 * Participe au mécanisme du singleton (on compare la classe courante à la 
-	 * liste des instances)
+	 * This attribute is part of the singleton mechanism (it stores AbstractFactory
+	 * extension classes, which should be unique).
 	 */
 	private static List<Class<AbstractFactory>> instantiatedSubclasses = new ArrayList<Class<AbstractFactory>>() ;
 	
 	/**
-	 * Classe technique gérant l'aspect graphique (Objets Interactionnels)
+	 * Reference to the technical implementation for graphics rendering
+	 * (Interactional Objects only).
 	 */
 	private Class<?> graphics ;
 	
+	/**
+	 * Reference to the technical implementation of persistence
+	 */
 	private Class<?> persistence ;
 	
 	protected AbstractFactory() {
@@ -58,10 +62,18 @@ public class AbstractFactory {
 		return this.graphics ;
 	}
 	
+	/**
+	 * Setter for the read-only <code>persistence</code> attribute.
+	 * @param persistence
+	 */
 	public void setPersistence(final Class<?> persistence) {
 		this.persistence = persistence ;
 	}
 	
+	/**
+	 * Setter for the read-only <code>graphics</code> attribute.
+	 * @return
+	 */
 	public Class<?> getPersistence() {
 		return persistence ;
 	}
