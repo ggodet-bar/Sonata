@@ -2,3 +2,6 @@ index.html
 lib/*
 output
 bin
+doc/*
+.classpath
+.project

@@ -23,6 +23,8 @@ Generating the Sonata plugin
 4.	Type the following in your terminal:	`ant jar -Daspectjpath=<path_to_aspectj>`
 5.	If everything goes well, you should have a `.jar` file in the newly created `output` directory of your project: this is the Sonata plugin ready to roll!
 
+Optional: You can generate the project's javadoc by running `ant doc`
+
 
 Documents
 ----------
@@ -35,6 +37,6 @@ For those interested, some of the underlying concepts (in particular, Symphony O
 
 *	[When Interaction Choices Trigger Business Evolution](http://iihm.imag.fr/publs/2008/CAISE08_ShortPaper_GodetBar_DupuyChessa_Rieu.pdf)
 
-You may also check out Sonata's [javadoc]() (coming!).
+You may also check out Sonata's javadoc (which is currently being translated from french to english!).
 
 

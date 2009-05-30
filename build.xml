@@ -10,9 +10,15 @@
 		<fileset file="${aspectjpath}/lib/aspectjrt.jar" />
 	</path>
 	
+	<target name = "doc">
+		<mkdir dir = "doc" />
+       		<javadoc sourcepath = "src" destdir = "doc"/>	
+	</target>
+
 	<target name = "clean">
 		<delete dir = "bin" />
 		<delete dir = "output" />
+		<delete dir = "doc" />
 	</target>
 
 	<target name="compile">
