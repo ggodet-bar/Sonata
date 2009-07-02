@@ -14,7 +14,7 @@ public class AbstractFactory {
 
 	/**
 	 * Singleton instance of the factory. <b>It should be redefined by every 
-	 * instance of <code>AbstractEntityFactory</code>.
+	 * instance of <code>AbstractEntityFactory</code></b>.
 	 */
 	public static AbstractFactory instance ;
 	
@@ -48,15 +48,17 @@ public class AbstractFactory {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.sonata.framework.common.entity.test#setGraphics(java.lang.Class)
+	/**
+	 * Setter for the read-only <code>graphics</code> attribute.
+	 * @param graphics
 	 */
 	public void setGraphics(final Class<?> graphics) {
 		this.graphics = graphics ;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.sonata.framework.common.entity.test#getGraphics()
+	/**
+	 * Getter for the read-only graphics class
+	 * @return the graphics class
 	 */
 	public Class<?> getGraphics() {
 		return this.graphics ;
@@ -70,9 +72,10 @@ public class AbstractFactory {
 		this.persistence = persistence ;
 	}
 	
+
 	/**
-	 * Setter for the read-only <code>graphics</code> attribute.
-	 * @return
+	 * Getter for the read-only persistence class
+	 * @return the persistence class
 	 */
 	public Class<?> getPersistence() {
 		return persistence ;
