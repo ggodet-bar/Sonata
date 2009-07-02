@@ -12,7 +12,7 @@
 	
 	<target name = "doc">
 		<mkdir dir = "doc" />
-       		<javadoc sourcepath = "src" destdir = "doc"/>	
+       		<javadoc sourcepath = "src" destdir = "doc" classpathref="classpath" />	
 	</target>
 
 	<target name = "clean">
