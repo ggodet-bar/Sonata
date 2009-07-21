@@ -33,6 +33,10 @@ import org.sonata.framework.control.request.RequestState;
  */
 public final class Invoker {
 
+	private static final String XML_FILE_DEFAULT_PATH = "SOConnections.xml" ;
+	
+	private String xmlFilePath = null ;
+	
 	private static final Logger logger = Logger.getLogger("control.invoker.Invoker") ;
 	
 	/**
@@ -105,17 +109,6 @@ public final class Invoker {
 		// ainsi qu'entre OMP et OIP
 		// (ainsi que le nom du wrapper associé)
 		referenceTable = new HashMap<String, BrokerReference>() ;
-		DAOInvoker.instance.chargerXML("XMLFile/OMConnexions.xml") ;
-		List<BrokerReference> connectionList;
-		try {
-			connectionList = DAOInvoker.instance.getReferenceConnections();
-			for (BrokerReference element : connectionList) {
-				referenceTable.put(element.source.getName(), element) ;
-			}
-			connectionTable = new HashMap<SymphonyObject, BrokerConnection> () ;
-		} catch (Exception e) {
-			Logger.getAnonymousLogger().severe("There was a problem fetching the connection list\n" + e.getMessage());
-		}
 		
 	}
 	
@@ -127,6 +120,32 @@ public final class Invoker {
 			}
 			return instance ;
 		}
+	}
+	
+	public void setXMLFilePath(final String filePath) {
+		xmlFilePath = filePath ;
+	}
+	
+	public int loadConnections() {
+		if (xmlFilePath == null) {
+			DAOInvoker.instance.chargerXML(XML_FILE_DEFAULT_PATH) ;
+		} else {
+			DAOInvoker.instance.chargerXML(xmlFilePath) ;
+		}
+		
+		List<BrokerReference> connectionList;
+		try {
+			connectionList = DAOInvoker.instance.getReferenceConnections();
+			
+			for (BrokerReference element : connectionList) {
+				referenceTable.put(element.source.getName(), element) ;
+			}
+			connectionTable = new HashMap<SymphonyObject, BrokerConnection> () ;
+		} catch (Exception e) {
+			Logger.getAnonymousLogger().severe("There was a problem fetching the connection list\n" + e.getMessage());
+		}
+		
+		return referenceTable.size() ;
 	}
 	
 	public Request createRequest(final SymphonyObject proc, final String operationName, final ProcessObject proxy) throws RequestOverlapException {
@@ -187,7 +206,7 @@ public final class Invoker {
 
 	
 	// Vérifications de la cohérence, de la complétude etc.
-	public void register(final SymphonyObject obj, AbstractFactory factory) {
+	public void register(final SymphonyObject obj) {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader() ;
 		
 		String studiedClass = new String (obj.getClass().getName()) ;
@@ -206,11 +225,6 @@ public final class Invoker {
 			{
 				logger.fine("OSE " + studiedClass + " est valide") ;
 
-				// On vérifie que la factory appartient également à l'OME
-				// (doit implémenter EntityFactory)
-
-				if (factory instanceof AbstractEntityFactory)
-				{
 					List<EntityObject> objectList = oELookupTable.get(classInterface) ;
 					if (objectList == null) {
 						objectList = new ArrayList<EntityObject>() ;
@@ -219,19 +233,11 @@ public final class Invoker {
 					objectList.add((EntityObject) obj) ;
 					oELookupTable.put(classInterface, objectList) ;
 					logger.finest("OSEFactory valide") ;
-				}
-				else {
-					logger.warning("OSEFactory invalide : " + studiedClass) ;
-				}
+
 			} else if (obj instanceof ProcessObject) {
 				// Mécanisme d'inscription de l'O(M/I)P
 				logger.fine("OSP " + studiedClass + " est valide") ;
 				
-				
-				// On vérifie que la factory appartient également à l'OMP
-				// (doit implémenter ProcessFactory)
-				if (factory instanceof AbstractProcessFactory)
-				{
 					List<ProcessObject> objectList = oPLookupTable.get(classInterface) ;
 					if (objectList == null) {
 						objectList = new ArrayList<ProcessObject>() ;
@@ -240,10 +246,7 @@ public final class Invoker {
 					objectList.add((ProcessObject) obj) ;
 					oPLookupTable.put(classInterface, objectList) ;
 					logger.finest("OSPFactory valide") ;
-				}
-				else {
-					logger.warning("OSPFactory invalide") ;
-				}
+
 			} else {
 				logger.warning("OS est invalide : " + studiedClass) ;
 			}
@@ -260,9 +263,6 @@ public final class Invoker {
 		// À partir de là, vérifier s'il existe une requête en cours à 
 		// laquelle associer l'Objet Symphony tout juste enregistré (en tant
 		// que destination !!!!)
-		
-
-		
 		SymphonyObject sourceObject = getReqSourceObject(obj) ;
 		if (sourceObject != null) {
 			bind(sourceObject, obj) ;

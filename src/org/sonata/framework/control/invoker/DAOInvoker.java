@@ -38,16 +38,16 @@ public class DAOInvoker {
 		File fichier = new File(pathFichier);
 		Document xmlData;
 		try {
-			xmlData = new SAXBuilder(true).build(fichier);
+			xmlData = new SAXBuilder(false).build(fichier);
 			structureDonnees = (List<Element>) xmlData.getRootElement().getChildren(
-					"OMConnection");
+					"SOConnection");
 		} catch (JDOMException e) {
 			Logger.getAnonymousLogger().severe(
-					"\nErreur de chargement du fichier XML.\nTrace :\n"
+					"\nCould not load connection file.\nTrace :\n"
 							+ e.getMessage());
 		} catch (IOException e) {
 			Logger.getAnonymousLogger().severe(
-					"\nErreur de chargement du fichier XML.\nTrace :\n"
+					"\nCould not load connection file.\nTrace :\n"
 							+ e.getMessage());
 		}
 	}
@@ -102,7 +102,13 @@ public class DAOInvoker {
 				}
 				
 				Element proxyElement = element.getChild("proxy") ;
-				Class<ProcessObject> proxy = (Class<ProcessObject>) classLoader.loadClass(proxyElement.getAttributeValue("name")) ;
+				
+				
+				Class<ProcessObject> proxy = null ;
+				// If the Invoker is in unitTesting mode, this attribute could be undefined
+				if (proxyElement != null) {
+					proxy = (Class<ProcessObject>) classLoader.loadClass(proxyElement.getAttributeValue("name")) ;
+				}
 				
 				wrapperClass = (Class<ConnectionTranslation>) classLoader.loadClass(element.getChild("translation").getAttributeValue("name"));
 				

@@ -1,0 +1,136 @@
+package sonata.test.unit;
+
+
+import java.util.Properties;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.sonata.framework.common.entity.AbstractEntityFactory;
+import org.sonata.framework.common.entity.EntityObjectServices;
+
+import sonata.test.sampleobject.SampleObject;
+import sonata.test.sampleobject2.SampleObject2;
+
+public class AbstractEntityFactoryTest {
+
+	private AbstractEntityFactory	aFactory ;
+	
+	/**
+	 * @precondition
+	 * 		1.	The factory is instantiated
+	 * @throws Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+		aFactory = new AbstractEntityFactory() ;
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		aFactory = null ;
+	}
+	
+	/**
+	 * @scenario 
+	 * 		1.	When at startup phase, the system registers a new SampleObject
+	 * class within the factory. A list of properties is also transferred, with the 
+	 * following elements :<br />
+	 * 			<table>
+	 * 				<tr style="font-weight:bold">
+	 * 					<td>Property</td><td>Value</td>
+	 * 				</tr>
+	 * 				<tr>
+	 * 					<td>username</td><td>Bob</td>
+	 * 				</tr>
+	 * 			</table>
+	 * 		2.	Then an instance of the sample object should integrate the properties
+	 * 		3.	And searching for the object should return the same reference
+	 */
+	@Test
+	public void shouldRegisterEntityObject() {
+		Properties prop = new Properties() ;
+		prop.setProperty("username", "Bob") ;
+		boolean isRegistered = aFactory.register(SampleObject.class, prop) ;
+		assert(isRegistered) ;
+		
+		SampleObject sample = (SampleObject) aFactory.createEntity(SampleObject.class) ;
+		assert (sample != null) ;
+		assert (sample.username().matches("Bob")) ;
+		
+		int oID = ((EntityObjectServices)sample).getID() ;
+		SampleObject object = (SampleObject) aFactory.search(SampleObject.class, oID) ;
+		
+		assert(object == sample) ;
+ 	}
+	
+	@Test
+	public void shouldSupportConcurrentAccess() {
+		Properties prop1 = new Properties(), prop2 = new Properties() ;
+		prop1.setProperty("username", "Albert") ;
+		prop2.setProperty("address", "Wall Street, NYC, United States of America") ;
+		aFactory.register(SampleObject.class, prop1) ;
+		aFactory.register(SampleObject2.class, prop2) ;
+		
+		
+		// We create 2000 instances for each object, which try to access the factory
+		// simultaneously
+		
+		Thread createObj1 = new Thread() {
+			
+			public void run() {
+				for (int i = 0 ; i < 2000 ; i++) {
+					aFactory.createEntity(SampleObject.class) ;
+				}
+			}
+		} ;
+		
+		Thread createObj2 = new Thread() {
+			
+			public void run() {
+				for (int i = 0 ; i < 2000 ; i++) {
+					aFactory.createEntity(SampleObject2.class) ;
+				}
+			}
+		} ; 
+		
+		createObj1.start() ;
+		createObj2.start() ;
+		
+		try {
+			createObj1.join() ;
+			createObj2.join() ;
+
+			
+			assert(aFactory.instances(SampleObject.class).size() == 2000) ;
+			assert(aFactory.instances(SampleObject2.class).size() == 2000) ;
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void shouldDeleteObjectsInRightFactory() {
+		Properties prop1 = new Properties(), prop2 = new Properties() ;
+		prop1.setProperty("username", "Albert") ;
+		prop2.setProperty("address", "Wall Street, NYC, United States of America") ;
+		aFactory.register(SampleObject.class, prop1) ;
+		aFactory.register(SampleObject2.class, prop2) ;
+		
+		for (int i = 0 ; i < 2000 ; i++) {
+			aFactory.createEntity(SampleObject.class) ;
+		}
+		
+		for (int i = 0 ; i < 2000 ; i++) {
+			aFactory.createEntity(SampleObject2.class) ;
+		}
+		
+		boolean deletionDone = aFactory.delete(SampleObject.class, 999) ;
+		
+		assert(deletionDone) ;
+		assert(aFactory.instances(SampleObject.class).size() == 1999) ;
+		assert(aFactory.instances(SampleObject2.class).size() == 2000) ;
+		
+	}
+}

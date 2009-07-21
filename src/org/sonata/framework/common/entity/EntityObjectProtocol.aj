@@ -6,8 +6,6 @@ public aspect EntityObjectProtocol {
 
 	@SuppressWarnings("unused")	// Apparently an AspectJ bug
 	private int EntityObjectServices.identifier = -1 ;
-	@SuppressWarnings("unused") // Apparently an AspectJ bug
-	private AbstractEntityFactory EntityObjectServices.factory = null ;
 	
 	public void EntityObjectServices.setID(int id) {
 		this.identifier = id ;
@@ -15,15 +13,5 @@ public aspect EntityObjectProtocol {
 	
 	public int EntityObjectServices.getID() {
 		return identifier ;
-	}
-	
-	public void EntityObjectServices.setFactory(AbstractEntityFactory factory) {
-		if (this.factory == null) {	// Should be executed only once (i.e., by the AbstractEntityFactory)
-			this.factory = factory ;
-		}
-	}
-	
-	public AbstractEntityFactory EntityObjectServices.getFactory() {
-		return this.factory ;
 	}
 }

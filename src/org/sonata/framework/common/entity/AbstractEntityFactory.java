@@ -1,10 +1,18 @@
 package org.sonata.framework.common.entity;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.sonata.framework.common.AbstractFactory;
 import org.sonata.framework.common.entity.EntityObjectServices;
+import org.sonata.framework.control.invoker.Invoker;
+
 
 /**
  * Classe abstraite de gestion des instances d'Objets Symphony. Tout Objet Symphony devra 
@@ -13,58 +21,70 @@ import org.sonata.framework.common.entity.EntityObjectServices;
  * @author godetg
  *
  */
-public abstract class AbstractEntityFactory extends AbstractFactory {
+public class AbstractEntityFactory extends AbstractFactory {
 	
-	/**
-	 * Différencie les factories gérant une seule instance de classe
-	 * des factories gérant plusieurs instances (typiquement, les factories
-	 * gérant les Objets Processus par rapport aux factories gérant la 
-	 * plupart des Objets Entité)
-	 */
-	private boolean isEntitySingleton = false ;
+	public static AbstractEntityFactory instance;
+	private Map<Class<?>, Properties> properties ;
+	private Map<Class<?>, Class<EntityObject>> soStructureMapping ;
 	
 	/**
 	 * Liste des instances d'Objets Entité du type géré par la Factory
 	 */
-	private final List<EntityObject> listeInstances ;
+	private final Map<Class<?>,List<EntityObject>> instances_m ;
 	
 	
-	protected AbstractEntityFactory() {
+	public AbstractEntityFactory() {
 		super() ;
-		listeInstances = new ArrayList<EntityObject>();
+		instance = this ;
+		instances_m = new HashMap<Class<?>, List<EntityObject>>() ;
+		soStructureMapping = new HashMap<Class<?>, Class<EntityObject>>() ;
+		properties = new HashMap<Class<?>, Properties>() ;
 	}
-
+	
+	
+	// TODO Au besoin rajouter une description de la structure de l'objet Symphony
+	// (quelle noms de classe)
+	public boolean register(final Class<?> klazz, final Properties prop) {
+		properties.put(klazz, prop) ;
+		instances_m.put(klazz, new ArrayList<EntityObject>()) ;
+		return true ;
+	}
+	
 	/**
-	 * Ajoute l'Objet Entité <code>object</code> à la liste des instances gérées
-	 * par l'instance de <code>AbstractEntityFactory</code>. La méthode renvoie
-	 * l'identifiant affecté à l'objet.
-	 * @param object l'objet à enregistrer auprès de la factory
-	 * @return l'identifiant de l'objet, -1 si l'ajout a généré une erreur
+	 * Adds the <code>object</code> element to the list of instances of the 
+	 * corresponding class <code>klazz</code>.
+	 * @param object the element which is registered in the factory
+	 * @return the unique identifier of the object, -1 if the method call
+	 * generated an error.
 	 */
-	public int add(final EntityObject object) {
-		boolean successfullyAdded = false ;
-		int returnValue ;
-		if (!(isEntitySingleton && !listeInstances.isEmpty())) {
-			successfullyAdded = listeInstances.add(object);
-		}
-		if (successfullyAdded) {
-			returnValue = listeInstances.indexOf(object) ;
-			((EntityObjectServices)object).setID(returnValue) ;
-			((EntityObjectServices)object).setFactory(this) ;
-		} else {
-			returnValue = -1 ;
-		}
+	public int add(final Class<?> klazz, final EntityObject object) {
+		int returnValue = -1 ;
+		
+		List<EntityObject> list = instances_m.get(klazz) ;
+		List<EntityObject> newList = new ArrayList<EntityObject>(list) ;
+		newList.add(object) ;
+		
+		returnValue = newList.indexOf(object) ;
+		instances_m.put(klazz, Collections.unmodifiableList(newList)) ;
+		
+		((EntityObjectServices)object).setID(returnValue) ;
+
 		return returnValue ;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.sonata.framework.common.entity.test#supprimer(int)
+
+	/**
+	 * Safe deletes the object from the Symphony Object class <code>klazz</code>
+	 * @return true if the deletion was successful, false otherwise
 	 */
-	public boolean supprimer(final int identifiant) {
-		EntityObject temp = rechercher(identifiant) ;
+	public boolean delete(Class<?> klazz, final int identifier) {
 		boolean resultValue = false ;
-		if (temp != null) {
-			resultValue = listeInstances.remove(temp);
+
+		EntityObject tmp = search(klazz, identifier) ;
+		if (tmp != null) {
+			List<EntityObject> theInstances = new ArrayList<EntityObject>(instances_m.get(klazz)) ;
+			resultValue = theInstances.remove(tmp) ;
+			instances_m.put(klazz, Collections.unmodifiableList(theInstances)) ;
 		}
 		return resultValue ;
 	}
@@ -72,36 +92,60 @@ public abstract class AbstractEntityFactory extends AbstractFactory {
 	/* (non-Javadoc)
 	 * @see org.sonata.framework.common.entity.test#listeInstances()
 	 */
-	public List<Object> listeInstances() {
-		List<Object> listeClonee = (List<Object>) ((ArrayList<EntityObject>)listeInstances).clone() ;
-		return listeClonee ;
+	public List<EntityObject> instances(Class<?> klazz) {
+		return instances_m.get(klazz) ;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.sonata.framework.common.entity.test#rechercher(int)
 	 */
-	public EntityObject rechercher(final int identifiant) {
+	public EntityObject search(Class<?> klazz, final int identifier) {
 		EntityObject returnValue = null;
-		if (identifiant <= listeInstances.size()) {
-			returnValue = listeInstances.get(identifiant);
+		if (identifier <= instances_m.get(klazz).size()) {
+			returnValue = instances_m.get(klazz).get(identifier);
 		}
 		return returnValue ;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.sonata.framework.common.entity.test#setEntitySingleton(boolean)
-	 */
-	public void setEntitySingleton(final boolean trueFalse) {
-		isEntitySingleton = trueFalse ;
+
+	public Object createEntity(Class<?> klazz) {
+		// If the factory has registered the klazz, then it should
+		// be able to return an instance of this SymphonyObject
+		EntityObject anInstance = null ;
+		if (instances_m != null && klazz.isInterface()) {
+			// Get the constructor
+			Constructor<EntityObject> constructor;
+			try {
+				constructor = (Constructor<EntityObject>) Class.forName(klazz.getName() + "Impl").getConstructor(Properties.class);
+				Properties prop = properties.get(klazz) ;
+				anInstance = constructor.newInstance(prop) ;
+			} catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		add(klazz, anInstance) ;
+		Invoker.instance.register(anInstance) ;
+		return anInstance;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.sonata.framework.common.entity.test#isEntitySingleton()
-	 */
-	public boolean isEntitySingleton() {
-		return isEntitySingleton ;
-	}
-	
-	public abstract Object creerEntite() ;
 	
 }

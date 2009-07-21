@@ -12,8 +12,6 @@ public aspect SymphonyRoleProtocol {
 	
 	private EntityObject SymphonyRoleServices.delegate = null;
 
-	private static AbstractEntityFactory factory = null;
-
 	private static List<EntityObject> delegates;
 
 	public EntityObject SymphonyRoleServices.getTargetSObject() {
@@ -22,7 +20,6 @@ public aspect SymphonyRoleProtocol {
 
 	public void SymphonyRoleServices.setTargetSObject(EntityObject obj) {
 		delegate = obj;
-		factory = ((EntityObjectServices) obj).getFactory();
 	}
 
 	public EntityObject SymphonyRoleServices.search(int objectID) {

@@ -1,6 +1,12 @@
 <project xmlns:aspectj="antlib:org.aspectj">
 	<property name="lib.dir" value="lib" />
 	<property name="version" value="0.8" />
+	<property name="test.dir" value="test" />
+	<property name="src.dir" value="src" />
+	<property name="bin.dir" value="bin" />
+	<property name="report.dir" value="report" />
+	<property name="output.dir" value="output" />
+	
 	
 	<taskdef 
 	      resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties"/>
@@ -16,8 +22,9 @@
 	</target>
 
 	<target name = "clean">
-		<delete dir = "bin" />
-		<delete dir = "output" />
+		<delete dir = "${bin.dir}" />
+		<delete dir = "${output.dir}" />
+		<delete dir = "${report.dir}" />
 		<delete dir = "doc" />
 	</target>
 
@@ -36,4 +43,17 @@
 		</jar>
 	</target>
 
+	<target name="test" description="Execute all the unit and integration tests" depends="compile">
+		<mkdir dir="report"/>
+		<echo message = "Java version: ${ant.java.version}" />
+		<junit fork="true" printsummary="true" failureproperty="junit.failure" haltonfailure="yes">
+		  <classpath>
+		  	<path refid="classpath" />
+			<pathelement location="${junitpath}/junit.jar"/>
+		  	<pathelement path="${bin.dir}" />
+		  </classpath>
+		  <formatter type="plain" />
+		  <test name="sonata.test.unit.SonataTestSuite" todir="${report.dir}"/>
+		</junit>
+	</target>
 </project>

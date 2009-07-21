@@ -16,7 +16,7 @@ public class AbstractFactory {
 	 * Singleton instance of the factory. <b>It should be redefined by every 
 	 * instance of <code>AbstractEntityFactory</code></b>.
 	 */
-	public static AbstractFactory instance ;
+	//public static AbstractFactory instance ;
 	
 	/**
 	 * This attribute is part of the singleton mechanism (it stores AbstractFactory
@@ -36,16 +36,16 @@ public class AbstractFactory {
 	private Class<?> persistence ;
 	
 	protected AbstractFactory() {
-		synchronized (instantiatedSubclasses) {
-			if (instantiatedSubclasses.contains(getClass())) {
-				throw new IllegalStateException(
-						"Attempt to create more than one instance of class "
-								+ getClass().getName()
-								+ ". Class should be a singleton");
-			}
-			instance = this;
-			instantiatedSubclasses.add((Class<AbstractFactory>) getClass());
-		}
+//		synchronized (instantiatedSubclasses) {
+//			if (instantiatedSubclasses.contains(getClass())) {
+//				throw new IllegalStateException(
+//						"Attempt to create more than one instance of class "
+//								+ getClass().getName()
+//								+ ". Class should be a singleton");
+//			}
+////			instance = this;
+//			instantiatedSubclasses.add((Class<AbstractFactory>) getClass());
+//		}
 	}
 	
 	/**
