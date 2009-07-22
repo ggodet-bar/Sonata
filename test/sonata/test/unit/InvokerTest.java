@@ -43,6 +43,14 @@ public class InvokerTest extends TestCase {
 		boolean isObjectRegistered = Invoker.instance.register((SymphonyObject) sample) ;
 		assert(isObjectRegistered) ;
 		
+		SampleObject2 sample2 = new SampleObject2Impl(null) ;
+		isObjectRegistered = Invoker.instance.register((SymphonyObject) sample2) ;
+		assert(isObjectRegistered) ;
+		
+		// Note that, even though both objects are described as part of a connection,
+		// the binding occurs only if a SampleObject2 is created in the context of 
+		// a request!
+		
 		// ... but it should reject incorrectly structured objects
 		AnyObject anyObject = new AnyObject() ;
 		isObjectRegistered = Invoker.instance.register(anyObject) ;
@@ -62,6 +70,8 @@ public class InvokerTest extends TestCase {
 	private class AnyObject implements SymphonyObject {
 		
 	}
+	
+	///////////////////////////////////////////////////////////////
 	
 	private interface SampleObject {
 		String username();
@@ -87,5 +97,25 @@ public class InvokerTest extends TestCase {
 			
 		}
 	}
-
+		
+	///////////////////////////////////////////////////////////////
+	
+	private interface SampleObject2 {
+		String address() ;
+	}
+	
+	private class SampleObject2Impl implements SampleObject2, EntityObject {
+		String address ;
+		
+		public SampleObject2Impl(Properties prop) {
+			if (prop != null) {
+				address = prop.getProperty("address") ;
+			}
+		}
+		
+		@Override
+		public String address() {
+			return address ;
+		}
+	}
 }

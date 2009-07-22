@@ -19,21 +19,21 @@ import org.sonata.framework.common.SymphonyObject;
 import org.sonata.framework.common.process.ProcessObject;
 import org.sonata.framework.control.exceptions.ParsingException;
 
-public class DAOInvoker {
+class DAOInvoker {
 	private static DAOInvoker uneInstanceDAOInvoker ;
 	
 	private static List<Element> structureDonnees ;
 	
-	public final static DAOInvoker instance = newInstance() ;
+	final static DAOInvoker instance = newInstance() ;
 	
 	private String pathFichier ;
 	
-	public static DAOInvoker newInstance() {
+	static DAOInvoker newInstance() {
 		if (uneInstanceDAOInvoker == null) uneInstanceDAOInvoker = new DAOInvoker  () ;
 		return uneInstanceDAOInvoker ;
 	}
 	
-	public void chargerXML(String pathFichier) {
+	void chargerXML(String pathFichier) {
 		this.pathFichier = pathFichier;
 		File fichier = new File(pathFichier);
 		Document xmlData;
@@ -57,7 +57,7 @@ public class DAOInvoker {
 	 * @return
 	 * @throws Exception 
 	 */
-	public List<BrokerReference> getReferenceConnections() throws Exception {
+	List<BrokerReference> getReferenceConnections() throws Exception {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader() ;
 		Class<SymphonyObject> sourceClass = null ;
 		Class<ConnectionTranslation> wrapperClass = null ;
