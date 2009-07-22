@@ -7,27 +7,17 @@ import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.sonata.framework.common.entity.AbstractEntityFactory;
+import org.sonata.framework.common.SymphonyObject;
 import org.sonata.framework.control.invoker.Invoker;
-
-import sonata.test.sampleobject.SampleObject;
-import sonata.test.sampleobject2.SampleObject2;
+import org.sonata.framework.common.entity.EntityObject;
 
 public class InvokerTest extends TestCase {
 	
 	private Invoker	theInvoker ;
-	private AbstractEntityFactory theFactory ;
 
-	/**
-	 * When instantiated, the invoker immediately loads the list
-	 * of SO connections. That should be either tested or extracted into
-	 * a separate method!
-	 * @throws Exception
-	 */
 	@Before
 	public void setUp() throws Exception {
 		theInvoker = Invoker.instance ;
-		theFactory = new AbstractEntityFactory() ;
 		theInvoker.setXMLFilePath("./test/sonata/SOConnections.xml") ;
 		theInvoker.setUnitTesting(true) ;
 	}
@@ -47,17 +37,55 @@ public class InvokerTest extends TestCase {
 
 		int nbConnections = theInvoker.loadConnections() ;
 		assert(nbConnections == 1) ;
-		Properties prop = new Properties() ;
-		theFactory.register(SampleObject.class, prop) ;
-		theFactory.register(SampleObject2.class, prop) ;
-		SampleObject sample = (SampleObject) theFactory.createEntity(SampleObject.class) ;
-		sample.triggeringCall() ;
-		//fail("Not yet implemented"); // TODO
+		
+		// The Invoker should register valid objects
+		SampleObject sample = new SampleObjectImpl(null) ;
+		boolean isObjectRegistered = Invoker.instance.register((SymphonyObject) sample) ;
+		assert(isObjectRegistered) ;
+		
+		// ... but it should reject incorrectly structured objects
+		AnyObject anyObject = new AnyObject() ;
+		isObjectRegistered = Invoker.instance.register(anyObject) ;
+		assert(!isObjectRegistered) ;
 	}
 	
 	@Test
 	public final void testRequestWithParameter() {
 		
+	}
+	
+	/*************************************************************
+	 * 
+	 * 		HERE BE TEST CLASSES
+	 *
+	/*************************************************************/
+	private class AnyObject implements SymphonyObject {
+		
+	}
+	
+	private interface SampleObject {
+		String username();
+
+		void triggeringCall() ;
+	}
+	
+	private class SampleObjectImpl implements SampleObject, EntityObject {
+		private String username ;
+		
+		public SampleObjectImpl(Properties prop) {
+			if (prop != null) {
+				username = prop.getProperty("username") ;
+			}
+		}
+		
+		public String username() {
+			return username ;
+		}
+
+		@Override
+		public void triggeringCall() {
+			
+		}
 	}
 
 }

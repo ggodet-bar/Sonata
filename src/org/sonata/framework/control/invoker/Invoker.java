@@ -11,13 +11,9 @@ import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.sonata.framework.common.AbstractFactory;
 import org.sonata.framework.common.ConnectionTranslation;
 import org.sonata.framework.common.SymphonyObject;
-import org.sonata.framework.common.entity.AbstractEntityFactory;
 import org.sonata.framework.common.entity.EntityObject;
-import org.sonata.framework.common.entity.EntityObjectServices;
-import org.sonata.framework.common.process.AbstractProcessFactory;
 import org.sonata.framework.common.process.ProcessObject;
 import org.sonata.framework.control.exceptions.InvalidSOConnection;
 import org.sonata.framework.control.exceptions.RequestOverlapException;
@@ -57,14 +53,12 @@ public final class Invoker {
 	private final Map<Class<?>, List<ProcessObject>>oPLookupTable ;
 	
 	/**
-	 * Pile des requêtes en cours. Chaque requête traitée (état RESPONSE_RECEIVED) est
-	 * retirée du stack, et la requête courante devient celle au-dessus du stack.
+	 * Stack of requests currently being processes. Each completed request (i.e., 
+	 * in a RESPONSE_RECEIVED state) is popped from the stack, the current request
+	 * being the one at the top of the stack.
 	 */
 	private transient Stack<Request> requestStack ;
-	
-	/**
-	 * Requête courante
-	 */ 
+
 	private transient Request currentRequest ;
 	
 	/**
@@ -153,21 +147,21 @@ public final class Invoker {
 		currentRequest = new RequestImpl(proc, operationName, proxy) ;
 		requestStack.push(currentRequest) ;
 		
-		logger.fine("Création de la requête par l'objet "+proc+" avec l'opération " + operationName +  "\nID de la requête : " + currentRequest) ;
+		logger.fine("Creating the request for object "+proc+" with operation " + operationName +  "\nRequest ID: " + currentRequest) ;
 		return currentRequest ;
 
 	}
 	
 	public void sendRequest() {
-		currentRequest.nextState() ; // Requête dans l'état 'SENT'
+		currentRequest.nextState() ; // Request should be in state 'SENT'
 		hasReturnedObject = false ;
 		
 		logger.fine(
 				
-				"Lancement du thread de traitement de la requête "
+				"Launching the request processing call for: "
 						+ currentRequest);	
 		
-		SymphonyObject sobject = currentRequest.getAssociatedSymphonyObject() ; // On obtient la source de l'appel
+		SymphonyObject sobject = currentRequest.getAssociatedSymphonyObject() ; // We get the caller's id
 
 		try {
 			validateConnection(sobject) ;
@@ -175,13 +169,12 @@ public final class Invoker {
 			logger.severe(e.getMessage());
 		}
 		invokeMethod(sobject);
-		currentRequest.nextState() ; // Requête dans l'état 'RESPONSE_RECEIVED'
+		currentRequest.nextState() ; // Request should be in state 'RESPONSE_RECEIVED'
 		currentRequest.setHasReturnValue(hasReturnedObject) ;
 		currentRequest.setReturnValue(returnObject) ;
 		
-		/*
-		 * Une fois la requête remplie, on sort celle-ci de la pile
-		 */
+
+		// Once the request is processed, we pop it out from the stack
 		requestStack.pop() ;
 		if (!requestStack.empty()) {
 			currentRequest = requestStack.peek() ;
@@ -206,14 +199,14 @@ public final class Invoker {
 
 	
 	// Vérifications de la cohérence, de la complétude etc.
-	public void register(final SymphonyObject obj) {
+	public boolean register(final SymphonyObject obj) {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader() ;
 		
 		String studiedClass = new String (obj.getClass().getName()) ;
 		String classIName = studiedClass.substring(0, studiedClass.length() - 4) ;
 		Class<?> classInterface = null ;
 		
-		logger.finest("Classe étudiée : " + studiedClass) ;	// Normalement une classe en 'Impl'
+		logger.finest("Class being processed: " + studiedClass) ;	// Normalement une classe en 'Impl'
 		
 		
 		//		 Pour valider l'OME (ou l'OMP), celui-ci doit implémenter EntityObject (ProcessObject)
@@ -223,7 +216,7 @@ public final class Invoker {
 		
 			if (obj instanceof EntityObject)
 			{
-				logger.fine("OSE " + studiedClass + " est valide") ;
+				logger.fine(studiedClass + " SOE is valid") ;
 
 					List<EntityObject> objectList = oELookupTable.get(classInterface) ;
 					if (objectList == null) {
@@ -232,11 +225,10 @@ public final class Invoker {
 					}
 					objectList.add((EntityObject) obj) ;
 					oELookupTable.put(classInterface, objectList) ;
-					logger.finest("OSEFactory valide") ;
 
 			} else if (obj instanceof ProcessObject) {
 				// Mécanisme d'inscription de l'O(M/I)P
-				logger.fine("OSP " + studiedClass + " est valide") ;
+				logger.fine(studiedClass + " SOP is valid") ;
 				
 					List<ProcessObject> objectList = oPLookupTable.get(classInterface) ;
 					if (objectList == null) {
@@ -245,15 +237,14 @@ public final class Invoker {
 					}
 					objectList.add((ProcessObject) obj) ;
 					oPLookupTable.put(classInterface, objectList) ;
-					logger.finest("OSPFactory valide") ;
 
 			} else {
-				logger.warning("OS est invalide : " + studiedClass) ;
+				logger.warning("Invalid Symphony Object: " + studiedClass) ;
 			}
 		} catch (ClassNotFoundException e1) {
-			logger.warning("Erreur lors de l'enregistrement de l'objet " +obj) ;
-			Logger.getAnonymousLogger().severe("La classe étudiée n'existe pas : " + e1.getMessage()) ;
-			return ;
+			logger.warning("An error occurred while registering the object " +obj) ;
+			Logger.getAnonymousLogger().severe("The class does not exist: " + e1.getMessage()) ;
+			return false ;
 		}
 		
 		// À ce point, on peut inscrire l'objet dans la table de lookup
@@ -268,8 +259,7 @@ public final class Invoker {
 			bind(sourceObject, obj) ;
 		}
 		
-
-
+		return true ;
 			
 	}
 
@@ -478,41 +468,34 @@ public final class Invoker {
 
 	
 	/**
-	 * Mise en relation explicite entre l'OI et l'OM. 
-	 * Une BrokerConnection est établie entre les deux objets, qui sera 
-	 * intégrée à la table de connexions de l'Invoker
+	 * Explicit binding between a BO instance and an IO instance. A BrokerConnection is setup between
+	 * the two objects and added to the connection table of the Invoker.
 	 * 
-	 * @param source l'Objet Symphony source
-	 * @param target l'Objet Symphony destination
+	 * @param source the source Symphony Object
+	 * @param target the target Symphony Object
 	 */
 	private void bind(final SymphonyObject source, final SymphonyObject target) {
 		
-		BrokerReference bkRef = null ;
+		BrokerReference brokerRef = null ;
 		
-		// TODO On valide la connexion entre source et target (une BrokerReference doit exister)
 		for (Class<?> singleInterface : source.getClass().getInterfaces()) {
 			// We get the interface name that should be that of the applicative services of the object
-			// TODO We could try to use annotations for identifying more easily the correct interface
-			// (i.e., in the current situation, a Symphony Object should not ever implement another interface)
-			if (!(singleInterface.getName().matches("common.process.ProcessObject") || 
-					singleInterface.getName().matches("common.entity.EntityObject") ||
-					singleInterface.getName().matches("interaction.common.Displayable"))) {
-				bkRef = referenceTable.get(singleInterface.getName());
-				break ;
-			}
+			// (i.e., we check if one of the interfaces has been registered in the referenceTable
+			brokerRef = referenceTable.get(singleInterface.getName());
+			if (brokerRef != null) { break ; }
 		}
 		
 		BrokerConnection connection = connectionTable.get(source);
 		
-		// Si la table de connexions de possede pas deja de reference,
-		// on prepare une nouvelle connexion
+		// If the connection table does not have a reference, we prepare
+		// a new connection
+		// TODO That should not happen?!
 		if (connection == null) {
-			
 			connection = new BrokerConnection() ;
 			connectionTable.put(source, connection);
 		} 
 	
-		for (Class<?> singleClass : bkRef.destinations) {
+		for (Class<?> singleClass : brokerRef.destinations) {
 			for (Class<?> targetInterface : target.getClass().getInterfaces()) {
 				if (targetInterface.equals(singleClass)) {
 					connection.getTranslation().addDestination((Class<SymphonyObject>) targetInterface, target) ;
@@ -522,7 +505,7 @@ public final class Invoker {
 		}	
 	
 		
-		logger.fine("connectionTable : nouveau lien entre " + source + " et " + target) ;
+		logger.fine("connectionTable: new link between " + source + " and " + target) ;
 	}
 
 	public void setUnitTesting(boolean trueFalse) {

@@ -9,7 +9,9 @@ public class SampleObjectImpl implements SampleObject, EntityObject {
 	private String username ;
 	
 	public SampleObjectImpl(Properties prop) {
-		username = prop.getProperty("username") ;
+		if (prop != null) {
+			username = prop.getProperty("username") ;
+		}
 	}
 	
 	public String username() {

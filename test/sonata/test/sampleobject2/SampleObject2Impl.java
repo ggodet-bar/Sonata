@@ -9,8 +9,9 @@ public class SampleObject2Impl implements EntityObject, SampleObject2 {
 	String address ;
 	
 	public SampleObject2Impl(Properties prop) {
-		address = prop.getProperty("address") ;
-		
+		if (prop != null) {
+			address = prop.getProperty("address") ;
+		}
 	}
 	
 	@Override
