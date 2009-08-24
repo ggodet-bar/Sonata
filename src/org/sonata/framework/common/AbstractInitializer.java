@@ -116,7 +116,7 @@ public abstract class AbstractInitializer {
 	
 	
 	public void setIsUnitTesting(boolean b) {
-		Invoker.instance.setUnitTesting(b);
+		Invoker.getInstance().setUnitTesting(b);
 		
 	}
 }

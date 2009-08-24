@@ -30,9 +30,9 @@ public class SampleObjectAspect {
 	@After("SampleObjectCalls() && execution(void triggeringCall()) && target(target)")
 	public void after(SampleObject target)  {
 		try{
-			req = Invoker.instance.createRequest((EntityObject)target, "translateCall", null);
+			req = Invoker.getInstance().createRequest((EntityObject)target, "translateCall", null);
 
-			Invoker.instance.sendRequest();
+			Invoker.getInstance().sendRequest();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

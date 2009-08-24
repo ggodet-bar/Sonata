@@ -146,7 +146,7 @@ public final class AbstractEntityFactory extends AbstractFactory {
 		}
 		
 		add(klazz, anInstance) ;
-		Invoker.instance.register(anInstance) ;
+		Invoker.getInstance().register(anInstance) ;
 		return anInstance;
 	}
 	
