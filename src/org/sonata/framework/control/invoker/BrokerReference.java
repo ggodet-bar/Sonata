@@ -20,6 +20,26 @@ public class BrokerReference {
 		destinations = new ArrayList<ReferenceElement>() ;
 	}
 	
+	public boolean equals(Object o) {
+		if (o == null || o.getClass() != this.getClass()) return false ;
+		
+		BrokerReference test = (BrokerReference) o ;
+		return (test.source.equals(source) &&
+				(proxy == null ^ test.proxy.equals(proxy))	&&
+				test.destinations.containsAll(destinations)	&&
+				test.translation.equals(translation)
+				) ;
+	}
+	
+	public int hashCode() {
+		int hash = 7 ;
+		hash = hash * 31 + source.klazz.getName().hashCode() ;
+		hash = hash * 31 + destinations.size() ;
+		hash = hash * 31 + destinations.get(0).klazz.getName().hashCode() ;
+		hash = hash * 31 + translation.getName().hashCode() ;
+		return hash ;
+	}
+	
 	public void setSource(Class<SymphonyObject> klazz, ReferenceType type) {
 		ReferenceElement reference = new ReferenceElement(klazz, type) ;
 		this.source = isReferenceElementValid(reference) ? reference : null ;
