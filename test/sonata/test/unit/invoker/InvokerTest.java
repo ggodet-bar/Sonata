@@ -20,6 +20,11 @@ import org.sonata.framework.control.request.Request;
 
 public class InvokerTest extends TestCase {
 	
+	/*
+	 * The Invoker is subclassed in order to bypass the singleton mechanism (constructor is only protected)
+	 */
+	private class myInvoker extends Invoker {}
+	
 	private Invoker	theInvoker ;
 	ReferenceElement sourceReference ;
 	ReferenceElement targetReference ;
@@ -28,7 +33,7 @@ public class InvokerTest extends TestCase {
 
 	@Before
 	public void setUp() throws Exception {
-		theInvoker = Invoker.newInstance() ;
+		theInvoker = new myInvoker() ;
 		theInvoker.setUnitTesting(true) ;
 		
 		// Connections should be configured by the Initializer, which
@@ -47,6 +52,9 @@ public class InvokerTest extends TestCase {
 		}
 	}
 	
+	/**
+	 * This method actually replicates the responsibility of the DAO
+	 */
 	private void loadConnection() {
 		BrokerReference aReference = new BrokerReference() ;
 		aReference.setSource(sourceReference) ;
@@ -59,7 +67,6 @@ public class InvokerTest extends TestCase {
 	@After
 	public void tearDown() throws Exception {
 		theInvoker = null ;
-		Invoker.instance = null ;
 	}
 
 	@Test
@@ -92,16 +99,16 @@ public class InvokerTest extends TestCase {
 		
 		// The Invoker should register valid objects
 		SampleObject sample = new SampleObjectImpl(null) ;
-		boolean isObjectRegistered = Invoker.instance.register((SymphonyObject) sample) ;
+		boolean isObjectRegistered = theInvoker.register((SymphonyObject) sample) ;
 		assertTrue(isObjectRegistered) ;
 		
 		SampleObject2 sample2 = new SampleObject2Impl(null) ;
-		isObjectRegistered = Invoker.instance.register((SymphonyObject) sample2) ;
+		isObjectRegistered = theInvoker.register((SymphonyObject) sample2) ;
 		assertTrue(isObjectRegistered) ;
 		
 		// Note that, even though both objects are described as part of a connection,
 		// the binding occurs only if a SampleObject2 is created in the context of 
-		// a request!
+		// a request (see integration tests)!
 
 	}
 	

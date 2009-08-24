@@ -36,7 +36,7 @@ import static org.sonata.framework.control.request.RequestState.*;
 /*
  *	TODO Déplacer la gestion du fichier XML dans l'AbstractInitializer.
  *	C'est probablement la cause du manque de cohésion de la classe, qui 
- *	devrait n'accepter qu'un stream
+ *	devrait n'accepter qu'une liste de BrokerReferences ?
  */
 /*
  * 	TODO Supprimer la méthode register, qui est redondante par rapport à
@@ -44,7 +44,7 @@ import static org.sonata.framework.control.request.RequestState.*;
  * 	On doit pouvoir remplacer la méthode par une encapsulation plus simple
  * 	de la méthode bind
  */
-public final class Invoker {
+public class Invoker {
 
 	private static final String XML_FILE_DEFAULT_PATH = "SOConnections.xml" ;
 	
@@ -52,7 +52,7 @@ public final class Invoker {
 	
 	private static final Logger logger = Logger.getLogger("control.invoker.Invoker") ;
 	
-	public static Invoker instance = newInstance() ;
+	private static Invoker instance ;
 	
 	/**
 	 * Liste des Objets Symphony enregistrés auprès de l'Invoker (Objets Entité
@@ -98,7 +98,7 @@ public final class Invoker {
 	private boolean isUnitTesting;
 	
 
-	private Invoker() {
+	protected Invoker() {
 		logger.setLevel(Level.FINE);
 		
 		requestStack = new Stack<Request>() ;
@@ -115,7 +115,7 @@ public final class Invoker {
 		
 	}
 	
-	public synchronized static Invoker newInstance() {
+	public synchronized static Invoker getInstance() {
 		if (instance == null)
 		{
 			instance = new Invoker() ;		
@@ -159,7 +159,7 @@ public final class Invoker {
 			}
 			connectionTable = new HashMap<SymphonyObject, ConnectionTranslation> () ;
 		} catch (Exception e) {
-			Logger.getAnonymousLogger().severe("There was a problem fetching the connection list\n" + e.getMessage());
+			logger.severe("There was a problem fetching the connection list\n" + e.getMessage());
 		}
 		
 		return referenceTable.size() ;
@@ -277,7 +277,7 @@ public final class Invoker {
 			}
 		} catch (ClassNotFoundException e1) {
 			logger.warning("An error occurred while registering the object " +obj) ;
-			Logger.getAnonymousLogger().severe("The class does not exist: " + e1.getMessage()) ;
+			logger.severe("The class does not exist: " + e1.getMessage()) ;
 			return false ;
 		}
 		
@@ -388,11 +388,11 @@ public final class Invoker {
 							.getConstructor(SymphonyObject.class, ProcessObject.class);
 					
 				} catch (SecurityException e) {
-					Logger.getAnonymousLogger().severe(
+					logger.severe(
 							"Erreur de sécurité (accès à la méthode)\n"
 									+ e.getMessage());
 				} catch (NoSuchMethodException e) {
-					Logger.getAnonymousLogger().severe(
+					logger.severe(
 							"La méthode n'existe pas\n" + e.getMessage());
 				}
 
@@ -411,8 +411,7 @@ public final class Invoker {
 				} 
 
 				connectionTable.put(proc, translationObject);
-				Logger.getLogger("control.invoker.Invoker")
-						.fine(
+				logger.fine(
 								"La connection entre "
 										+ proc
 										+ " et ses cibles est assurée au travers de la translation "
@@ -481,7 +480,7 @@ public final class Invoker {
 			method = liveConnection.getClass().getMethod(
 					methodName, (Class[]) convertedPTypes);
 		} catch (NoSuchMethodException e) {
-			Logger.getAnonymousLogger().info("Method does not exist. Trying to unwrap primitive arguments") ;
+			logger.info("Method does not exist. Trying to unwrap primitive arguments") ;
 			
 			List<Class<?>> newArguments = new LinkedList<Class<?>>() ;
 			
