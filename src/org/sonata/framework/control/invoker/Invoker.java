@@ -35,11 +35,6 @@ import static org.sonata.framework.control.request.RequestState.*;
  *	(par exemple en obtenant l'instance depuis la AbstractEntityFactory !)
  */
 /*
- *	TODO Déplacer la gestion du fichier XML dans l'AbstractInitializer.
- *	C'est probablement la cause du manque de cohésion de la classe, qui 
- *	devrait n'accepter qu'une liste de BrokerReferences ?
- */
-/*
  * 	TODO Supprimer la méthode register, qui est redondante par rapport à
  * 	la même méthode dans la classe AbstractEntityFactory !
  * 	On doit pouvoir remplacer la méthode par une encapsulation plus simple
@@ -48,10 +43,6 @@ import static org.sonata.framework.control.request.RequestState.*;
 public class Invoker {
 
 	private InvokerDAO dao ;
-	
-	private static final String XML_FILE_DEFAULT_PATH = "SOConnections.xml" ;
-	
-	private String xmlFilePath = null ;
 	
 	private static final Logger logger = Logger.getLogger("control.invoker.Invoker") ;
 	
@@ -144,28 +135,6 @@ public class Invoker {
 		
 		return true ;
 	}
-	
-//	if (xmlFilePath == null) {
-//		DAOInvoker.instance.chargerXML(XML_FILE_DEFAULT_PATH) ;
-//	} else {
-//		DAOInvoker.instance.chargerXML(xmlFilePath) ;
-//	}
-//	
-//	List<BrokerReference> connectionList;
-//	try {
-//		connectionList = DAOInvoker.instance.getReferenceConnections();
-//		
-//		for (BrokerReference element : connectionList) {
-//			referenceTable.put(element.getIndex(), element) ;
-//		}
-//		connectionTable = new HashMap<SymphonyObject, ConnectionTranslation> () ;
-//	} catch (Exception e) {
-//		logger.severe("There was a problem fetching the connection list\n" + e.getMessage());
-//	}
-	
-//	public void setXMLFilePath(final String filePath) {
-//		xmlFilePath = filePath ;
-//	}
 	
 	public int loadConnections() throws IOException {
 		if (dao == null) throw new IllegalStateException("The DAO should be defined.") ;

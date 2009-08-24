@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.example.org/sonata" 
+    elementFormDefault="unqualified" 
+    attributeFormDefault="unqualified"
+	xmlns:sonata="http://www.example.org/sonata">
+	
+	<xsd:element name="SOConnections">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="SOConnection" maxOccurs="unbounded" minOccurs="1">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="source" maxOccurs="1" minOccurs="1">
+								<xsd:complexType>
+									<xsd:attribute name="type" type="sonata:soType"/>
+									<xsd:attribute name="name" type="xsd:string" />
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="target" maxOccurs="unbounded" minOccurs="1">
+								<xsd:complexType>
+									<xsd:attribute name="type" type="sonata:soType"/>
+									<xsd:attribute name="name" type="xsd:string" />
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="translation" maxOccurs="1" minOccurs="1">
+								<xsd:complexType>
+									<xsd:attribute name="name" type="xsd:string" />
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:simpleType name="soType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="BOE" />
+			<xsd:enumeration value="BOP" />
+			<xsd:enumeration value="IOE" />
+			<xsd:enumeration value="IOP" />
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

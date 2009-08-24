@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<SOConnections>
-	<SOConnection>
-		<source type="OIE" name="sonata.test.sampleobject.SampleObject" />
-		<destination type="OME" name="sonata.test.sampleobject2.SampleObject2" />
-		<translation name="sonata.test.translation.SampleObjectTranslation" />
-	</SOConnection>
-</SOConnections>

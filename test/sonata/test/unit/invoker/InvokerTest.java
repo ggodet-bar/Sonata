@@ -305,22 +305,6 @@ class ConnectionLoader extends InvokerDAO {
  * 		HERE BE TEST CLASSES
  *
 /*************************************************************/
-/*
- * TODO This file should be moved to the DAO test!!
- */
-interface XMLFile {
-	
-	String theFile =
-		"<?xml version='1.0' encoding='UTF-8'?>\n" +
-		"<SOConnections>\n" +
-		"	<SOConnection>\n" +
-		"		<source type='OIE' name='sonata.test.sampleobject.SampleObject' />\n" +
-		"		<destination type='OME' name='sonata.test.sampleobject2.SampleObject2' />\n" +
-		"		<translation name='sonata.test.translation.SampleObjectTranslation' />\n" +
-		"	</SOConnection>\n" +
-		"</SOConnections>\n" ;
-}
-
 class AnyObject implements SymphonyObject {
 	
 }
