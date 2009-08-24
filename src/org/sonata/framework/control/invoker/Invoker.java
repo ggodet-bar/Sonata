@@ -1,5 +1,6 @@
 package org.sonata.framework.control.invoker;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -46,6 +47,8 @@ import static org.sonata.framework.control.request.RequestState.*;
  */
 public class Invoker {
 
+	private IInvokerDAO dao ;
+	
 	private static final String XML_FILE_DEFAULT_PATH = "SOConnections.xml" ;
 	
 	private String xmlFilePath = null ;
@@ -123,6 +126,10 @@ public class Invoker {
 		return instance ;
 	}
 	
+	public void setDao(IInvokerDAO aDao) {
+		this.dao = aDao ;
+	}
+	
 	/**
 	 * Note that the reference should only be registered once for every index key.
 	 * Reloading a reference while connections with the old reference are still 
@@ -130,38 +137,41 @@ public class Invoker {
 	 * @param reference
 	 * @return
 	 */
-	public boolean registerConnection(BrokerReference reference) {
-		if (referenceTable.get(reference.getIndex()) == null) {
-			referenceTable.put(reference.getIndex(), reference) ;
-		} else {
-			return false ;
-		}
+	protected boolean registerConnection(BrokerReference reference) {
+		if (referenceTable.containsValue(reference)) return false ;
+		
+		referenceTable.put(reference.getIndex(), reference) ;
+		
 		return true ;
 	}
 	
-	public void setXMLFilePath(final String filePath) {
-		xmlFilePath = filePath ;
-	}
+//	if (xmlFilePath == null) {
+//		DAOInvoker.instance.chargerXML(XML_FILE_DEFAULT_PATH) ;
+//	} else {
+//		DAOInvoker.instance.chargerXML(xmlFilePath) ;
+//	}
+//	
+//	List<BrokerReference> connectionList;
+//	try {
+//		connectionList = DAOInvoker.instance.getReferenceConnections();
+//		
+//		for (BrokerReference element : connectionList) {
+//			referenceTable.put(element.getIndex(), element) ;
+//		}
+//		connectionTable = new HashMap<SymphonyObject, ConnectionTranslation> () ;
+//	} catch (Exception e) {
+//		logger.severe("There was a problem fetching the connection list\n" + e.getMessage());
+//	}
 	
-	public int loadConnections() {
-		if (xmlFilePath == null) {
-			DAOInvoker.instance.chargerXML(XML_FILE_DEFAULT_PATH) ;
-		} else {
-			DAOInvoker.instance.chargerXML(xmlFilePath) ;
+//	public void setXMLFilePath(final String filePath) {
+//		xmlFilePath = filePath ;
+//	}
+	
+	public int loadConnections() throws IOException {
+		if (dao == null) throw new IllegalStateException("The DAO should be defined.") ;
+		for (BrokerReference aRef : dao.getBrokerReferences()) {
+			if (!registerConnection(aRef)) throw new IOException("Error occurred while registering a connection") ;
 		}
-		
-		List<BrokerReference> connectionList;
-		try {
-			connectionList = DAOInvoker.instance.getReferenceConnections();
-			
-			for (BrokerReference element : connectionList) {
-				referenceTable.put(element.getIndex(), element) ;
-			}
-			connectionTable = new HashMap<SymphonyObject, ConnectionTranslation> () ;
-		} catch (Exception e) {
-			logger.severe("There was a problem fetching the connection list\n" + e.getMessage());
-		}
-		
 		return referenceTable.size() ;
 	}
 	

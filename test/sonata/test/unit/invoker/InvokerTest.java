@@ -1,6 +1,9 @@
 package sonata.test.unit.invoker;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
 import junit.framework.TestCase;
@@ -17,15 +20,21 @@ import org.sonata.framework.control.invoker.BrokerReference;
 import org.sonata.framework.control.invoker.Invoker;
 import org.sonata.framework.control.invoker.ReferenceElement;
 import org.sonata.framework.control.request.Request;
+import org.sonata.framework.control.invoker.IInvokerDAO;
 
 public class InvokerTest extends TestCase {
 	
 	/*
 	 * The Invoker is subclassed in order to bypass the singleton mechanism (constructor is only protected)
 	 */
-	private class myInvoker extends Invoker {}
+	private class myInvoker extends Invoker {
+		public boolean registerConnection(BrokerReference reference) {
+			return super.registerConnection(reference) ;
+		}
+	}
 	
-	private Invoker	theInvoker ;
+	private myInvoker	theInvoker ;
+	private ConnectionLoader loader ;
 	ReferenceElement sourceReference ;
 	ReferenceElement targetReference ;
 	Class<? extends ConnectionTranslation> translation ;
@@ -50,18 +59,21 @@ public class InvokerTest extends TestCase {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+		
+		loader = new ConnectionLoader() ;
+		theInvoker.setDao(loader) ;
 	}
 	
 	/**
-	 * This method actually replicates the responsibility of the DAO
+	 * This method actually replicates the responsibility of a DAO
 	 */
 	private void loadConnection() {
-		BrokerReference aReference = new BrokerReference() ;
-		aReference.setSource(sourceReference) ;
-		aReference.addDestination(targetReference) ;
-		aReference.setTranslation(translation) ;
-		
-		theInvoker.registerConnection(aReference) ;
+		loader.addReference(sourceReference, translation, targetReference) ;
+		try {
+			theInvoker.loadConnections() ;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@After
@@ -71,26 +83,30 @@ public class InvokerTest extends TestCase {
 
 	@Test
 	public final void testRegisterConnection() {	
-		BrokerReference aReference = new BrokerReference() ;
-		aReference.setSource(sourceReference) ;
-		aReference.addDestination(targetReference) ;
-		aReference.setTranslation(translation) ;
-		boolean didRegister = theInvoker.registerConnection(aReference) ;
 		
-		assertTrue(didRegister) ;
+		int nbConnections = 0;
+		loader.addReference(sourceReference, translation, targetReference) ;
+		try {
+			nbConnections = theInvoker.loadConnections();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		assertEquals(1, nbConnections) ;
 	}
 	
 	@Test
 	public final void testDoNotRegisterConnectionTwice() {
-		BrokerReference aReference = new BrokerReference() ;
-		aReference.setSource(sourceReference) ;
-		aReference.addDestination(targetReference) ;
-		aReference.setTranslation(translation) ;
-		
-		theInvoker.registerConnection(aReference) ;
-		boolean didRegister = theInvoker.registerConnection(aReference) ;
-		
-		assertFalse(didRegister) ;
+		boolean exceptionWasThrown = false ;
+		loader.addReference(sourceReference, translation, targetReference) ;
+		loader.addReference(sourceReference, translation, targetReference) ;
+		try {
+			theInvoker.loadConnections() ;
+		} catch (IOException e) {
+			exceptionWasThrown = true ;
+		}
+		assertTrue(exceptionWasThrown) ;
 	}
 	
 	@Test
@@ -267,6 +283,32 @@ public class InvokerTest extends TestCase {
 		assertTrue(isExceptionThrown) ;
 	}
 
+}
+
+class ConnectionLoader implements IInvokerDAO {
+
+	List<BrokerReference>	theReferences ;
+	
+	public ConnectionLoader() {
+		theReferences = new LinkedList<BrokerReference>() ;
+	}
+	
+	@Override
+	public List<BrokerReference> getBrokerReferences() {
+		return theReferences ;
+	}
+	
+	public void addReference(ReferenceElement sourceReference, Class<? extends ConnectionTranslation> translation, ReferenceElement...destinations) {
+		BrokerReference aReference = new BrokerReference() ;
+		aReference.setSource(sourceReference) ;
+		for (ReferenceElement aDestination : destinations) {
+			aReference.addDestination(aDestination) ;
+		}
+		aReference.setTranslation(translation) ;
+		
+		theReferences.add(aReference) ;
+	}
+	
 }
 
 /*************************************************************
