@@ -47,7 +47,7 @@ import static org.sonata.framework.control.request.RequestState.*;
  */
 public class Invoker {
 
-	private IInvokerDAO dao ;
+	private InvokerDAO dao ;
 	
 	private static final String XML_FILE_DEFAULT_PATH = "SOConnections.xml" ;
 	
@@ -126,7 +126,7 @@ public class Invoker {
 		return instance ;
 	}
 	
-	public void setDao(IInvokerDAO aDao) {
+	public void setDao(InvokerDAO aDao) {
 		this.dao = aDao ;
 	}
 	

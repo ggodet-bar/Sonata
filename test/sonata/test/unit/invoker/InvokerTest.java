@@ -20,7 +20,7 @@ import org.sonata.framework.control.invoker.BrokerReference;
 import org.sonata.framework.control.invoker.Invoker;
 import org.sonata.framework.control.invoker.ReferenceElement;
 import org.sonata.framework.control.request.Request;
-import org.sonata.framework.control.invoker.IInvokerDAO;
+import org.sonata.framework.control.invoker.InvokerDAO;
 
 public class InvokerTest extends TestCase {
 	
@@ -285,18 +285,7 @@ public class InvokerTest extends TestCase {
 
 }
 
-class ConnectionLoader implements IInvokerDAO {
-
-	List<BrokerReference>	theReferences ;
-	
-	public ConnectionLoader() {
-		theReferences = new LinkedList<BrokerReference>() ;
-	}
-	
-	@Override
-	public List<BrokerReference> getBrokerReferences() {
-		return theReferences ;
-	}
+class ConnectionLoader extends InvokerDAO {
 	
 	public void addReference(ReferenceElement sourceReference, Class<? extends ConnectionTranslation> translation, ReferenceElement...destinations) {
 		BrokerReference aReference = new BrokerReference() ;
