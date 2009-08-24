@@ -25,7 +25,7 @@ public class BrokerReference {
 		
 		BrokerReference test = (BrokerReference) o ;
 		return (test.source.equals(source) &&
-				(proxy == null ^ test.proxy.equals(proxy))	&&
+				(proxy == null || test.proxy.equals(proxy))	&&
 				test.destinations.containsAll(destinations)	&&
 				test.translation.equals(translation)
 				) ;

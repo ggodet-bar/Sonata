@@ -1,20 +1,21 @@
 package org.sonata.framework.common;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.sonata.framework.common.process.ProcessObject;
 
-public class ConnectionTranslation {
+public abstract class ConnectionTranslation {
 
 	// Map de toutes les connections g�r�es par chaque classe translation.
 	// La map exacte est :
 	//		Objet Source	>	[ClasseDestination, InstaceDestination] (destinations)
 	private static Map<SymphonyObject, Map<Class<?>, SymphonyObject>> connections_m = new HashMap<SymphonyObject, Map<Class<?>, SymphonyObject>>();
 	
-	private final transient SymphonyObject source ;
-	private final transient Map<Class<?>, SymphonyObject> destinations  ;
-	private final transient ProcessObject proxy ;
+	private final SymphonyObject source ;
+	private final Map<Class<?>, SymphonyObject> destinations  ;
+	private final ProcessObject proxy ;
 	
 	public static Map<Class<?>, SymphonyObject>getCorrespondance(final SymphonyObject source) {
 		return connections_m.get(source) ;
@@ -28,6 +29,25 @@ public class ConnectionTranslation {
 		connections_m.put(source, destinations) ;
 	}
 	
+	public boolean equals(Object o) {
+		if (o == null || !o.getClass().equals(this)) return false ;
+		ConnectionTranslation test = (ConnectionTranslation) o ;
+		Collection<SymphonyObject> destValues = test.destinations.values() ;
+		Collection<SymphonyObject> thisValues = destinations.values() ;
+		return (test.source.equals(source) &&
+				destValues.containsAll(thisValues) &&
+				thisValues.containsAll(destValues) &&
+				(proxy == null || test.proxy.equals(proxy))
+				) ;
+	}
+	
+	public int hashCode() {
+		int hash = 13 ;
+		hash = hash * 31 + source.getClass().getName().hashCode() ;
+		hash = hash * 31 + destinations.size() ;
+		return hash ;
+	}
+	
 	public void addDestination(final Class<?> referenceClass, final SymphonyObject destination) {
 		destinations.put(referenceClass, destination) ;
 	}
@@ -35,7 +55,6 @@ public class ConnectionTranslation {
 	public SymphonyObject getDestination(final Class<SymphonyObject> clazz) {
 		return destinations.get(clazz) ;
 	}
-	
 
 	public SymphonyObject getSource() {
 		return source ;
