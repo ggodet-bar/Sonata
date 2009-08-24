@@ -1,7 +1,6 @@
-package sonata.test.sampleobject;
+package sonata.test.unit.abstractentityfactory;
 
 public interface SampleObject {
-
 	String username();
 
 	void triggeringCall() ;

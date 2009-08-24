@@ -16,19 +16,20 @@ import org.sonata.framework.control.invoker.Invoker;
 
 /**
  * Classe abstraite de gestion des instances d'Objets Symphony. Tout Objet Symphony devra 
- * décrire une classe Factory étendant <code>AbstractEntityFactory</code>.
+ * dï¿½crire une classe Factory ï¿½tendant <code>AbstractEntityFactory</code>.
  * 
  * @author godetg
  *
  */
-public class AbstractEntityFactory extends AbstractFactory {
+public final class AbstractEntityFactory extends AbstractFactory {
 	
 	public static AbstractEntityFactory instance;
 	private Map<Class<?>, Properties> properties ;
-	private Map<Class<?>, Class<EntityObject>> soStructureMapping ;
+//	private Map<Class<?>, Class<EntityObject>> soStructureMapping ;
+	private ClassLoader	classLoader ;
 	
 	/**
-	 * Liste des instances d'Objets Entité du type géré par la Factory
+	 * Liste des instances d'Objets Entitï¿½ du type gï¿½rï¿½ par la Factory
 	 */
 	private final Map<Class<?>,List<EntityObject>> instances_m ;
 	
@@ -37,8 +38,9 @@ public class AbstractEntityFactory extends AbstractFactory {
 		super() ;
 		instance = this ;
 		instances_m = new HashMap<Class<?>, List<EntityObject>>() ;
-		soStructureMapping = new HashMap<Class<?>, Class<EntityObject>>() ;
+//		soStructureMapping = new HashMap<Class<?>, Class<EntityObject>>() ;
 		properties = new HashMap<Class<?>, Properties>() ;
+		classLoader = Thread.currentThread().getContextClassLoader() ;
 	}
 	
 	
@@ -115,7 +117,7 @@ public class AbstractEntityFactory extends AbstractFactory {
 			// Get the constructor
 			Constructor<EntityObject> constructor;
 			try {
-				constructor = (Constructor<EntityObject>) Class.forName(klazz.getName() + "Impl").getConstructor(Properties.class);
+				constructor = (Constructor<EntityObject>) classLoader.loadClass(klazz.getName() + "Impl").getConstructor(Properties.class);
 				Properties prop = properties.get(klazz) ;
 				anInstance = constructor.newInstance(prop) ;
 			} catch (SecurityException e) {

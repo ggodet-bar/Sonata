@@ -1,11 +1,10 @@
-package sonata.test.sampleobject;
+package sonata.test.unit.abstractentityfactory;
 
 import java.util.Properties;
 
 import org.sonata.framework.common.entity.EntityObject;
 
 public class SampleObjectImpl implements SampleObject, EntityObject {
-
 	private String username ;
 	
 	public SampleObjectImpl(Properties prop) {
@@ -22,4 +21,9 @@ public class SampleObjectImpl implements SampleObject, EntityObject {
 	public void triggeringCall() {
 		
 	}
+
+}
+
+interface SampleObject2 {
+	String address() ;
 }

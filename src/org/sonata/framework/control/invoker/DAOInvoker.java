@@ -65,14 +65,14 @@ class DAOInvoker {
 		
 		if (structureDonnees == null)
 		{
-			throw new ParsingException("From file: " + pathFichier + "\nLa structure de données chargée est vide") ;
+			throw new ParsingException("From file: " + pathFichier + "\nLa structure de donnï¿½es chargï¿½e est vide") ;
 		}
 		ArrayList<BrokerReference> brkConnList = new ArrayList<BrokerReference> () ;
-		// Parcours des éléments OMConnection
+		// Parcours des ï¿½lï¿½ments OMConnection
 		for (Element element : structureDonnees) {
 			
-			// Pour chaque OMConnection, on récupère la source, LES destinations, le wrapper
-			// sous forme de chaînes de caractères.
+			// Pour chaque OMConnection, on rï¿½cupï¿½re la source, LES destinations, le wrapper
+			// sous forme de chaï¿½nes de caractï¿½res.
 			
 				// Parsage du ReferenceType de la source
 				ReferenceType sourceType = null ;
@@ -112,11 +112,12 @@ class DAOInvoker {
 				
 				wrapperClass = (Class<ConnectionTranslation>) classLoader.loadClass(element.getChild("translation").getAttributeValue("name"));
 				
-				brkConnList.add(new BrokerReference(sourceClass,
-													sourceType,
-													destination,
-													proxy,
-													wrapperClass)) ;
+				// TODO Temporally disabled
+//				brkConnList.add(new BrokerReference(sourceClass,
+//													sourceType,
+//													destination,
+//													proxy,
+//													wrapperClass)) ;
 
 
 		}

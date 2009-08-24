@@ -1,5 +1,9 @@
-package sonata.test.unit;
+package sonata.test.unit.abstractentityfactory;
 
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Properties;
 
@@ -9,8 +13,6 @@ import org.junit.Test;
 import org.sonata.framework.common.entity.AbstractEntityFactory;
 import org.sonata.framework.common.entity.EntityObjectServices;
 
-import sonata.test.sampleobject.SampleObject;
-import sonata.test.sampleobject2.SampleObject2;
 
 public class AbstractEntityFactoryTest {
 
@@ -24,6 +26,7 @@ public class AbstractEntityFactoryTest {
 	@Before
 	public void setUp() throws Exception {
 		aFactory = new AbstractEntityFactory() ;
+		
 	}
 
 	@After
@@ -52,16 +55,16 @@ public class AbstractEntityFactoryTest {
 		Properties prop = new Properties() ;
 		prop.setProperty("username", "Bob") ;
 		boolean isRegistered = aFactory.register(SampleObject.class, prop) ;
-		assert(isRegistered) ;
+		assertTrue(isRegistered) ;
 		
 		SampleObject sample = (SampleObject) aFactory.createEntity(SampleObject.class) ;
-		assert (sample != null) ;
-		assert (sample.username().matches("Bob")) ;
+		assertNotNull (sample) ;
+		assertTrue (sample.username().matches("Bob")) ;
 		
 		int oID = ((EntityObjectServices)sample).getID() ;
 		SampleObject object = (SampleObject) aFactory.search(SampleObject.class, oID) ;
 		
-		assert(object == sample) ;
+		assertEquals(object, sample) ;
  	}
 	
 	@Test
@@ -102,8 +105,8 @@ public class AbstractEntityFactoryTest {
 			createObj2.join() ;
 
 			
-			assert(aFactory.instances(SampleObject.class).size() == 2000) ;
-			assert(aFactory.instances(SampleObject2.class).size() == 2000) ;
+			assertEquals(2000, aFactory.instances(SampleObject.class).size()) ;
+			assertEquals(2000, aFactory.instances(SampleObject2.class).size()) ;
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -128,9 +131,11 @@ public class AbstractEntityFactoryTest {
 		
 		boolean deletionDone = aFactory.delete(SampleObject.class, 999) ;
 		
-		assert(deletionDone) ;
-		assert(aFactory.instances(SampleObject.class).size() == 1999) ;
-		assert(aFactory.instances(SampleObject2.class).size() == 2000) ;
+		assertTrue(deletionDone) ;
+		assertEquals(1999, aFactory.instances(SampleObject.class).size()) ;
+		assertEquals(2000, aFactory.instances(SampleObject2.class).size()) ;
 		
 	}
 }
+
+

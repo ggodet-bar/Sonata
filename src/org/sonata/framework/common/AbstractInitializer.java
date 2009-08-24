@@ -48,9 +48,9 @@ public abstract class AbstractInitializer {
 			Document doc = sxb.build(file.getAbsoluteFile());
 			root = doc.getRootElement() ;
 		} catch (JDOMException e) {
-			Logger.getAnonymousLogger().severe("Ereur de chargement du fichier de propriétés.\n" + e.getMessage());
+			Logger.getAnonymousLogger().severe("Ereur de chargement du fichier de propriÃ©tÃ©s.\n" + e.getMessage());
 		} catch (IOException e) {
-			Logger.getAnonymousLogger().severe("Ereur de chargement du fichier de propriétés.\n" + e.getMessage());
+			Logger.getAnonymousLogger().severe("Ereur de chargement du fichier de propriÃ©tÃ©s.\n" + e.getMessage());
 		}
 }
 	

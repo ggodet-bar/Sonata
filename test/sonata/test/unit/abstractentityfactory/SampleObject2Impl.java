@@ -1,11 +1,10 @@
-package sonata.test.sampleobject2;
+package sonata.test.unit.abstractentityfactory;
 
 import java.util.Properties;
 
 import org.sonata.framework.common.entity.EntityObject;
 
-public class SampleObject2Impl implements EntityObject, SampleObject2 {
-
+public class SampleObject2Impl implements SampleObject2, EntityObject {
 	String address ;
 	
 	public SampleObject2Impl(Properties prop) {
@@ -18,5 +17,4 @@ public class SampleObject2Impl implements EntityObject, SampleObject2 {
 	public String address() {
 		return address ;
 	}
-
 }
