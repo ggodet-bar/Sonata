@@ -60,8 +60,8 @@ public class XMLInvokerDAOTest {
 		int nbReferences = references.size() ;
 		assertEquals(1, nbReferences) ;
 		
-		assertEquals(new ReferenceElement(SampleObject.class, ReferenceType.OIE), getFirstSource(references)) ;
-		assertEquals(new ReferenceElement(SampleObject2.class, ReferenceType.OME), getFirstDestination(references)) ;
+		assertEquals(new ReferenceElement(SampleObject.class, ReferenceType.IOE), getFirstSource(references)) ;
+		assertEquals(new ReferenceElement(SampleObject2.class, ReferenceType.BOE), getFirstDestination(references)) ;
 		assertEquals(SampleObjectTranslation.class, getFirstTranslation(references)) ;
 	}
 
@@ -92,8 +92,8 @@ interface XMLFile {
 		"<SOConnections xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'" +
 			" xsi:schemaLocation='file://Schemas/SOConnections.xsd'>\n" +
 		"	<SOConnection>\n" +
-		"		<source type='OIE' name='sonata.test.unit.invokerdao.SampleObject' />\n" +
-		"		<destination type='OME' name='sonata.test.unit.invokerdao.SampleObject2' />\n" +
+		"		<source type='IOE' name='sonata.test.unit.invokerdao.SampleObject' />\n" +
+		"		<destination type='BOE' name='sonata.test.unit.invokerdao.SampleObject2' />\n" +
 		"		<translation name='sonata.test.unit.invokerdao.SampleObjectTranslation' />\n" +
 		"	</SOConnection>\n" +
 		"</SOConnections>\n" ;

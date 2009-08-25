@@ -19,7 +19,7 @@ import org.sonata.framework.control.exceptions.RequestOverlapException;
 import org.sonata.framework.control.invoker.BrokerReference;
 import org.sonata.framework.control.invoker.Invoker;
 import org.sonata.framework.control.invoker.ReferenceElement;
-import org.sonata.framework.control.request.Request;
+import org.sonata.framework.control.invoker.Request;
 import org.sonata.framework.control.invoker.InvokerDAO;
 
 public class InvokerTest extends TestCase {
@@ -52,8 +52,8 @@ public class InvokerTest extends TestCase {
 		// decoupling between tested classes
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader() ;
 		try {
-			sourceReference = new ReferenceElement(classLoader.loadClass("sonata.test.unit.invoker.SampleObject"), ReferenceType.OIE) ;
-			targetReference = new ReferenceElement(classLoader.loadClass("sonata.test.unit.invoker.SampleObject2"), ReferenceType.OME) ;
+			sourceReference = new ReferenceElement(classLoader.loadClass("sonata.test.unit.invoker.SampleObject"), ReferenceType.IOE) ;
+			targetReference = new ReferenceElement(classLoader.loadClass("sonata.test.unit.invoker.SampleObject2"), ReferenceType.BOE) ;
 			translation = (Class<? extends ConnectionTranslation>) classLoader.loadClass("sonata.test.unit.invoker.SampleObjectTranslation") ;
 			
 		} catch (ClassNotFoundException e) {

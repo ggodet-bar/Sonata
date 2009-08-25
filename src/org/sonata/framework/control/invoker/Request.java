@@ -1,6 +1,6 @@
-package org.sonata.framework.control.request;
+package org.sonata.framework.control.invoker;
 
-import static org.sonata.framework.control.request.RequestState.*;
+import static org.sonata.framework.control.invoker.RequestState.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.Queue;
 import org.sonata.framework.common.SymphonyObject;
 import org.sonata.framework.common.process.ProcessObject;
 
-public class RequestImpl implements Request {
+public class Request{
 
 	private final SymphonyObject associatedOS ;
 	
@@ -27,7 +27,7 @@ public class RequestImpl implements Request {
 	
 	private boolean hasReturnValue ;
 	
-	public RequestImpl(SymphonyObject OS, String operationName, ProcessObject proxy) {
+	Request(SymphonyObject OS, String operationName, ProcessObject proxy) {
 		this.associatedOS = OS ;
 		this.operationName = operationName ;
 		this.proxy = proxy ;
@@ -36,7 +36,7 @@ public class RequestImpl implements Request {
 		state = INCOMPLETE ;
 	}
 	
-	// NB : Implémentation de la liste des arguments comme une file
+	// NB : Implï¿½mentation de la liste des arguments comme une file
 	public void pushParameter(final Object param) {
 		args.offer(param) ;
 		argTypes.offer(param.getClass()) ;

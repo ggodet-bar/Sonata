@@ -19,9 +19,8 @@ import org.sonata.framework.common.entity.EntityObject;
 import org.sonata.framework.common.process.ProcessObject;
 import org.sonata.framework.control.exceptions.InvalidSOConnection;
 import org.sonata.framework.control.exceptions.RequestOverlapException;
-import org.sonata.framework.control.request.Request;
-import org.sonata.framework.control.request.RequestImpl;
-import static org.sonata.framework.control.request.RequestState.*;
+
+import static org.sonata.framework.control.invoker.RequestState.*;
 
 
 /**
@@ -148,7 +147,7 @@ public class Invoker {
 
 		if (currentRequest != null && currentRequest.getRequestState() != SENT) throw new RequestOverlapException() ;
 		
-		currentRequest = new RequestImpl(proc, operationName, proxy) ;
+		currentRequest = new Request(proc, operationName, proxy) ;
 		requestStack.push(currentRequest) ;
 		
 		logger.fine("Creating the request for object "+proc+" with operation " + operationName +  "\nRequest ID: " + currentRequest) ;

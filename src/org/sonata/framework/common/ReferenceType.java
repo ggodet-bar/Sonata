@@ -1,8 +1,23 @@
 package org.sonata.framework.common;
 
 public enum ReferenceType {
-	OMP,
-	OME,
-	OIE,
-	OIP
+	/**
+	 * Business Object Process
+	 */
+	BOP,
+	
+	/**
+	 * Business Object Entity
+	 */
+	BOE,
+	
+	/**
+	 * Interactional Object Entity
+	 */
+	IOE,
+	
+	/**
+	 * Interactional Object Process
+	 */
+	IOP
 }

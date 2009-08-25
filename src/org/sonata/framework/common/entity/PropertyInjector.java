@@ -11,6 +11,15 @@ import org.sonata.framework.common.SymphonyObject;
 
 class PropertyInjector {
 
+	/**
+	 * 
+	 * @param <T>
+	 * @param klazz
+	 * @param instance
+	 * @param prop
+	 * @return
+	 * @throws NoSuchMethodException
+	 */
 	<T extends SymphonyObject> T inject(Class<?> klazz, T instance, Properties prop) throws NoSuchMethodException {
 		for (Object aKey : prop.keySet()) {
 			List<String> methodNames = toMethodNames((String)aKey) ;
@@ -43,6 +52,17 @@ class PropertyInjector {
 		return instance ;
 	}
 	
+	/**
+	 * Casts string arguments to the corresponding primitive types, when necessary.
+	 * Uses the <code>typesList</code> of the target method in order to infer on
+	 * the possible "casts" to primitive types. If the target type is either not
+	 * a primitive or a String, then the String argmument from <code>preArgs</code>
+	 * is not copied in the resulting array, as is. 
+	 * 
+	 * @param typesList the array of types that should be cast to
+	 * @param preArgs the initial array of string arguments
+	 * @return the object array of the cast arguments
+	 */
 	private Object[] castArguments(Class<?>[] typesList, String[] preArgs) {
 		List<Object> args = new LinkedList<Object>() ;
 		
@@ -107,13 +127,13 @@ class PropertyInjector {
 	}
 	
 	/**
-	 * Generates all the possible setter names for the property named <code>s</code>,
+	 * Generates all the possible setter names for the property named <code>name</code>,
 	 * based on JavaBeans conventions, and returns them as a list of strings.
-	 * @param s
+	 * @param name
 	 * @return
 	 */
-	private List<String> toMethodNames(String s) {
-		String baseName =  s.substring(0, 1).toUpperCase() + s.substring(1) ;
+	private List<String> toMethodNames(String name) {
+		String baseName =  name.substring(0, 1).toUpperCase() + name.substring(1) ;
 		List<String> result = new LinkedList<String>() ;
 		result.add("set" + baseName) ;
 		return result ;
