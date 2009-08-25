@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.Dimension;
 import java.util.Properties;
 
 import org.junit.After;
@@ -60,7 +61,7 @@ public class AbstractEntityFactoryTest {
 		
 		SampleObject sample = (SampleObject) aFactory.createEntity(SampleObject.class) ;
 		assertNotNull (sample) ;
-		assertTrue (sample.username().matches("Bob")) ;
+		assertEquals ("Bob", sample.getUsername()) ;
 		
 		int oID = ((EntityObjectServices)sample).getID() ;
 		SampleObject object = (SampleObject) aFactory.search(SampleObject.class, oID) ;
@@ -69,10 +70,52 @@ public class AbstractEntityFactoryTest {
  	}
 	
 	@Test
+	public void shouldRegisterTwoEntityObjects() {
+		Properties prop1 = new Properties(), prop2 = new Properties() ;
+		prop1.setProperty("username", "Albert") ;
+		prop2.setProperty("address", "\"Wall Street, NYC, United States of America\"") ;
+		aFactory.register(SampleObject.class, prop1) ;
+		boolean isRegistered = aFactory.register(SampleObject2.class, prop2) ;
+		assertTrue(isRegistered) ;
+
+		SampleObject sample = (SampleObject) aFactory.createEntity(SampleObject.class) ;
+		assertNotNull (sample) ;
+		assertEquals ("Albert", sample.getUsername()) ;
+		
+		SampleObject2 sample2 = (SampleObject2) aFactory.createEntity(SampleObject2.class) ;
+		assertNotNull (sample2) ;
+		assertEquals ("Wall Street, NYC, United States of America", sample2.getAddress()) ;
+	}
+	
+	@Test
+	public void shouldSupportPrimitiveTypeProperties() {
+		Properties prop1 = new Properties() ;
+		prop1.setProperty("username", "Albert") ;
+		prop1.setProperty("age", "22") ;
+		prop1.setProperty("male", "true") ;
+		aFactory.register(SampleObject.class, prop1) ;
+		SampleObject sample = (SampleObject) aFactory.createEntity(SampleObject.class) ;
+		
+		assertNotNull (sample) ;
+		assertEquals(22, sample.getAge()) ;
+		assertEquals(true, sample.isMale()) ;
+	}
+	
+	@Test
+	public void shouldSupportComplexTypeProperties() {
+		Properties prop1 = new Properties() ;
+		prop1.setProperty("flatDimensions", "23, 34") ;
+		aFactory.register(SampleObject.class, prop1) ;
+		SampleObject sample = (SampleObject) aFactory.createEntity(SampleObject.class) ;
+		assertNotNull (sample) ;
+		assertEquals(new Dimension(23, 34), sample.getFlatDimensions()) ;
+	}
+	
+	@Test
 	public void shouldSupportConcurrentAccess() {
 		Properties prop1 = new Properties(), prop2 = new Properties() ;
 		prop1.setProperty("username", "Albert") ;
-		prop2.setProperty("address", "Wall Street, NYC, United States of America") ;
+		prop2.setProperty("address", "\"Wall Street, NYC, United States of America\"") ;
 		aFactory.register(SampleObject.class, prop1) ;
 		aFactory.register(SampleObject2.class, prop2) ;
 		
@@ -118,7 +161,7 @@ public class AbstractEntityFactoryTest {
 	public void shouldDeleteObjectsInRightFactory() {
 		Properties prop1 = new Properties(), prop2 = new Properties() ;
 		prop1.setProperty("username", "Albert") ;
-		prop2.setProperty("address", "Wall Street, NYC, United States of America") ;
+		prop2.setProperty("address", "\"Wall Street, NYC, United States of America\"") ;
 		aFactory.register(SampleObject.class, prop1) ;
 		aFactory.register(SampleObject2.class, prop2) ;
 		

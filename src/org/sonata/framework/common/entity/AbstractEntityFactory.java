@@ -19,6 +19,7 @@ public class AbstractEntityFactory extends AbstractFactory {
 	private Map<Class<?>, Properties> properties ;
 //	private Map<Class<?>, Class<EntityObject>> soStructureMapping ;
 	private ClassLoader	classLoader ;
+	private PropertyInjector injector ;
 	
 	/**
 	 * Map of all Symphony Object instances for each Symphony Object type
@@ -31,6 +32,7 @@ public class AbstractEntityFactory extends AbstractFactory {
 //		soStructureMapping = new HashMap<Class<?>, Class<EntityObject>>() ;
 		properties = new HashMap<Class<?>, Properties>() ;
 		classLoader = Thread.currentThread().getContextClassLoader() ;
+		injector = new PropertyInjector() ;
 	}
 	
 	public synchronized static AbstractEntityFactory getInstance() {
@@ -114,9 +116,10 @@ public class AbstractEntityFactory extends AbstractFactory {
 			// Get the constructor
 			Constructor<EntityObject> constructor;
 			try {
-				constructor = (Constructor<EntityObject>) classLoader.loadClass(klazz.getName() + "Impl").getConstructor(Properties.class);
+				constructor = (Constructor<EntityObject>) classLoader.loadClass(klazz.getName() + "Impl").getConstructor();
 				Properties prop = properties.get(klazz) ;
-				anInstance = constructor.newInstance(prop) ;
+				anInstance = constructor.newInstance() ;
+				anInstance = injector.inject(klazz, anInstance, prop) ;
 			} catch (SecurityException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

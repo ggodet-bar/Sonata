@@ -1,20 +1,21 @@
 package sonata.test.unit.abstractentityfactory;
 
-import java.util.Properties;
+import java.awt.Dimension;
 
 import org.sonata.framework.common.entity.EntityObject;
 
 public class SampleObjectImpl implements SampleObject, EntityObject {
 	private String username ;
+	private int age ;
+	private boolean isMale ;
+	private Dimension flatDimensions ;
 	
-	public SampleObjectImpl(Properties prop) {
-		if (prop != null) {
-			username = prop.getProperty("username") ;
-		}
+	public String getUsername() {
+		return username ;
 	}
 	
-	public String username() {
-		return username ;
+	public void setUsername(String username) {
+		this.username = username ;
 	}
 
 	@Override
@@ -22,8 +23,35 @@ public class SampleObjectImpl implements SampleObject, EntityObject {
 		
 	}
 
+	@Override
+	public int getAge() {
+		return age ;
+	}
+
+	@Override
+	public void setAge(int age) {
+		this.age = age ;
+	}
+
+	@Override
+	public boolean isMale() {
+		return isMale ;
+	}
+
+	@Override
+	public void setMale(boolean isMale) {
+		this.isMale = isMale ;
+	}
+
+	@Override
+	public Dimension getFlatDimensions() {
+		return flatDimensions ;
+	}
+
+	@Override
+	public void setFlatDimensions(short width, short length) {
+		flatDimensions = new Dimension(width, length) ;
+	}
+
 }
 
-interface SampleObject2 {
-	String address() ;
-}
