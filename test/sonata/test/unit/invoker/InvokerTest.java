@@ -35,9 +35,9 @@ public class InvokerTest extends TestCase {
 	
 	private myInvoker	theInvoker ;
 	private ConnectionLoader loader ;
-	ReferenceElement sourceReference ;
-	ReferenceElement targetReference ;
-	Class<? extends ConnectionTranslation> translation ;
+	private ReferenceElement sourceReference ;
+	private ReferenceElement targetReference ;
+	private Class<? extends ConnectionTranslation> translation ;
 	
 
 	@Before

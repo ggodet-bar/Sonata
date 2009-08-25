@@ -18,7 +18,7 @@
 	
 	<target name = "doc">
 		<mkdir dir = "doc" />
-       		<javadoc sourcepath = "src" destdir = "doc" classpathref="classpath" />	
+       		<javadoc sourcepath = "src" destdir = "doc" classpathref="classpath" access="private"/>	
 	</target>
 
 	<target name = "clean">

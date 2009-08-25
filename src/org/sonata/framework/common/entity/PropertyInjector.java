@@ -2,7 +2,6 @@ package org.sonata.framework.common.entity;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -75,6 +74,20 @@ class PropertyInjector {
 		return args.toArray();
 	}
 	
+	/**
+	 * Parses the passed string into an array of arguments represented as strings.
+	 * Arguments can be passed as comma-separated strings.
+	 * Should the argument itself include commas, the argument may be
+	 * passed between escaped (\") quotes, e.g.:<br />
+	 * <code>"\"I, a long argument with, y'know, commas\", 14, a 
+	 * simple string argument"</code><br />
+	 * Also, note that all arguments are trimmed for leading and
+	 * trailing spaces. The second argument of the above example 
+	 * would therefore be parsed as <code>"14"</code> and not
+	 * <code>" 14"</code>.
+	 * @param s the whole string representing the list of arguments
+	 * @return the array of arguments
+	 */
 	private String[] parseArguments(String s) {
 		List<String> arguments = new LinkedList<String>() ;
 		Scanner scanner = new Scanner(s) ;
@@ -94,7 +107,8 @@ class PropertyInjector {
 	}
 	
 	/**
-	 * Generates all the possible setter names, based on JavaBeans conventions
+	 * Generates all the possible setter names for the property named <code>s</code>,
+	 * based on JavaBeans conventions, and returns them as a list of strings.
 	 * @param s
 	 * @return
 	 */
@@ -105,6 +119,22 @@ class PropertyInjector {
 		return result ;
 	}
 	
+	/**
+	 * Returns a method corresponding to the passed name(s) and parameters.
+	 * 
+	 * Checks for any method within class <code>klazz</code> with:
+	 * <ul>
+	 * 	<li>the same name as any contained in <code>methodNames</code>,</li>
+	 *  <li>the same number of parameters as contained in <code>arguments</code>.</li>
+	 * </ul>
+	 * 
+	 * The method found following this algorithm is then returned.
+	 * If no method has been found, returns <code>null</code>.
+	 * @param klazz
+	 * @param methodNames
+	 * @param arguments
+	 * @return
+	 */
 	private Method getMatchingMethod(Class<?> klazz, List<String> methodNames, String... arguments) {
 		Method theMethod = null ;
 		for (Method aMethod : klazz.getMethods()) {
