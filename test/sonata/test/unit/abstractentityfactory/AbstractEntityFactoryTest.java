@@ -15,7 +15,7 @@ import org.sonata.framework.common.entity.EntityObjectServices;
 
 
 public class AbstractEntityFactoryTest {
-
+	
 	private AbstractEntityFactory	aFactory ;
 	
 	/**
@@ -25,7 +25,8 @@ public class AbstractEntityFactoryTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		aFactory = new AbstractEntityFactory() ;
+		// Using an anonymous subclass for bypassing the singleton mechanism
+		aFactory = new AbstractEntityFactory() {};
 		
 	}
 

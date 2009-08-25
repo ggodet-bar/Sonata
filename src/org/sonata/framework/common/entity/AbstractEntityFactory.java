@@ -13,34 +13,31 @@ import org.sonata.framework.common.AbstractFactory;
 import org.sonata.framework.common.entity.EntityObjectServices;
 import org.sonata.framework.control.invoker.Invoker;
 
-
-/**
- * Classe abstraite de gestion des instances d'Objets Symphony. Tout Objet Symphony devra 
- * d�crire une classe Factory �tendant <code>AbstractEntityFactory</code>.
- * 
- * @author godetg
- *
- */
-public final class AbstractEntityFactory extends AbstractFactory {
+public class AbstractEntityFactory extends AbstractFactory {
 	
-	public static AbstractEntityFactory instance;
+	private static AbstractEntityFactory instance;
 	private Map<Class<?>, Properties> properties ;
 //	private Map<Class<?>, Class<EntityObject>> soStructureMapping ;
 	private ClassLoader	classLoader ;
 	
 	/**
-	 * Liste des instances d'Objets Entit� du type g�r� par la Factory
+	 * Map of all Symphony Object instances for each Symphony Object type
 	 */
 	private final Map<Class<?>,List<EntityObject>> instances_m ;
 	
 	
-	public AbstractEntityFactory() {
-		super() ;
-		instance = this ;
+	protected AbstractEntityFactory() {
 		instances_m = new HashMap<Class<?>, List<EntityObject>>() ;
 //		soStructureMapping = new HashMap<Class<?>, Class<EntityObject>>() ;
 		properties = new HashMap<Class<?>, Properties>() ;
 		classLoader = Thread.currentThread().getContextClassLoader() ;
+	}
+	
+	public synchronized static AbstractEntityFactory getInstance() {
+		if (instance == null) {
+			instance = new AbstractEntityFactory() ;
+		}
+		return instance ;
 	}
 	
 	
