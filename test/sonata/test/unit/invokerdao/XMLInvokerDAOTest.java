@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Properties;
 
 import org.junit.After;
@@ -13,8 +14,11 @@ import org.junit.Test;
 import org.sonata.framework.common.entity.EntityObject;
 import org.sonata.framework.common.process.ProcessObject;
 import org.sonata.framework.control.exceptions.ParsingException;
+import org.sonata.framework.control.invoker.BrokerReference;
+import org.sonata.framework.control.invoker.ReferenceElement;
 import org.sonata.framework.control.invoker.XMLInvokerDAO;
 import org.sonata.framework.common.ConnectionTranslation;
+import org.sonata.framework.common.ReferenceType;
 import org.sonata.framework.common.SymphonyObject;
 
 public class XMLInvokerDAOTest {
@@ -41,17 +45,41 @@ public class XMLInvokerDAOTest {
 	@Test
 	public final void testParsing() {
 		boolean parseResult = false ;
+		boolean exceptionNotThrown = true ;
 		try {
 			parseResult = loader.parseXmlFile() ;
 		} catch (ParsingException e) {
-			// TODO Auto-generated catch block
+			exceptionNotThrown = false ;
 			e.printStackTrace();
 		}
+		assertTrue(exceptionNotThrown) ;
 		assertTrue(parseResult) ;
 		
+		List<BrokerReference> references = loader.getBrokerReferences() ;
+		
+		int nbReferences = references.size() ;
+		assertEquals(1, nbReferences) ;
+		
+		assertEquals(new ReferenceElement(SampleObject.class, ReferenceType.OIE), getFirstSource(references)) ;
+		assertEquals(new ReferenceElement(SampleObject2.class, ReferenceType.OME), getFirstDestination(references)) ;
+		assertEquals(SampleObjectTranslation.class, getFirstTranslation(references)) ;
 	}
 
+	
+	private ReferenceElement getFirstSource(List<BrokerReference> list) {
+		return list.get(0).getSource() ;
+	}
+	
+	private ReferenceElement getFirstDestination(List<BrokerReference> list) {
+		return list.get(0).getDestinations().get(0) ;
+	}
+	
+	private Class<? extends ConnectionTranslation> getFirstTranslation(List<BrokerReference> list) {
+		return list.get(0).getTranslation() ;
+	}
 }
+
+
 /*************************************************************
  * 
  * 		HERE BE TEST CLASSES

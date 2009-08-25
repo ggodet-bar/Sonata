@@ -75,9 +75,7 @@ public class BrokerReference {
 	}
 	
 	public List<ReferenceElement> getDestinations() {
-		List<ReferenceElement> liste = new ArrayList<ReferenceElement>(destinations.size()) ;
-		Collections.copy(liste, destinations) ;
-		return liste ;
+		return Collections.unmodifiableList(destinations) ;
 	}
 	
 	public void setTranslation(Class<? extends ConnectionTranslation> translation) {

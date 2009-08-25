@@ -11,7 +11,7 @@ public abstract class InvokerDAO {
 		theReferences = new LinkedList<BrokerReference>() ;
 	}
 	
-	List<BrokerReference> getBrokerReferences() {
+	public List<BrokerReference> getBrokerReferences() {
 		return theReferences ;
 	}
 }

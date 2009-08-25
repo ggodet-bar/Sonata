@@ -222,8 +222,7 @@ public class Invoker {
 
 					List<EntityObject> objectList = oELookupTable.get(classInterface) ;
 					if (objectList == null) {
-						objectList = new ArrayList<EntityObject>() ;
-						
+						objectList = new ArrayList<EntityObject>() ;						
 					}
 					// Should not register same object twice !					
 					if (objectList.contains(obj)) {
