@@ -27,7 +27,6 @@ class PropertyInjector {
 			// with string parameters, except for primitive types, which are treated here
 			Object[] argumentArray = castArguments(theMethod.getParameterTypes(), preArgumentArray) ;
 			
-			// Temporary
 			try {
 				theMethod.invoke(instance, (Object[])argumentArray) ;
 			} catch (IllegalArgumentException e) {
@@ -66,6 +65,8 @@ class PropertyInjector {
 				args.add(new Float(currentArg)) ;
 			} else if (currentType == double.class) {
 				args.add(new Double(currentArg)) ;
+			} else if (currentType == char.class) {
+				args.add(new Character(currentArg.charAt(0))) ;
 			} else {
 				args.add(currentArg) ;
 			}
