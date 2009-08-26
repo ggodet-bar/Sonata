@@ -52,7 +52,7 @@ public abstract class ConnectionTranslation {
 		destinations.put(referenceClass, destination) ;
 	}
 	
-	public SymphonyObject getDestination(final Class<SymphonyObject> clazz) {
+	public SymphonyObject getDestination(final Class<?> clazz) {
 		return destinations.get(clazz) ;
 	}
 

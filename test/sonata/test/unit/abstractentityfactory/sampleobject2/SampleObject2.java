@@ -1,4 +1,4 @@
-package sonata.test.unit.abstractentityfactory;
+package sonata.test.unit.abstractentityfactory.sampleobject2;
 
 public interface SampleObject2 {
 	

@@ -184,95 +184,7 @@ public class Invoker {
 		
 		return true ;
 	}
-	
-//	public boolean requestHasReturnedObject() {
-//		return currentRequest.getRequestState() == RESPONSE_RECEIVED && hasReturnedObject ;
-//	}
-	
-//	public Object getReturnObject() throws IllegalStateException {
-//		if (requestHasReturnedObject()) {
-//		return returnObject;}
-//		else {
-//			throw new IllegalStateException("La commande est inappropriée") ;
-//		}
-//	}
-	
 
-	
-	// Vérifications de la cohérence, de la complétude etc.
-	public boolean register(final SymphonyObject obj) {
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader() ;
-		
-		String studiedClass = new String (obj.getClass().getName()) ;
-		String classIName = studiedClass.substring(0, studiedClass.length() - 4) ;
-		Class<?> classInterface = null ;
-		
-		logger.finest("Class being processed: " + studiedClass) ;	// Normalement une classe en 'Impl'
-		
-		
-		//		 Pour valider l'OME (ou l'OMP), celui-ci doit implémenter EntityObject (ProcessObject)
-		try {
-			
-			classInterface = classLoader.loadClass(classIName);
-		
-			if (obj instanceof EntityObject)
-			{
-				logger.fine(studiedClass + " SOE is valid") ;
-
-					List<EntityObject> objectList = oELookupTable.get(classInterface) ;
-					if (objectList == null) {
-						objectList = new ArrayList<EntityObject>() ;						
-					}
-					// Should not register same object twice !					
-					if (objectList.contains(obj)) {
-						return false ;
-					}
-					
-					objectList.add((EntityObject) obj) ;
-					oELookupTable.put(classInterface, objectList) ;
-
-			} else if (obj instanceof ProcessObject) {
-				// Mécanisme d'inscription de l'O(M/I)P
-				logger.fine(studiedClass + " SOP is valid") ;
-				
-					List<ProcessObject> objectList = oPLookupTable.get(classInterface) ;
-					if (objectList == null) {
-						objectList = new ArrayList<ProcessObject>() ;
-						
-					}
-					
-					// Should not register same object twice !
-					if (objectList.contains(obj)) {
-						return false ;
-					}
-					
-					objectList.add((ProcessObject) obj) ;
-					oPLookupTable.put(classInterface, objectList) ;
-
-			} else {
-				logger.warning("Invalid Symphony Object: " + studiedClass) ;
-			}
-		} catch (ClassNotFoundException e1) {
-			logger.warning("An error occurred while registering the object " +obj) ;
-			logger.severe("The class does not exist: " + e1.getMessage()) ;
-			return false ;
-		}
-		
-		// À ce point, on peut inscrire l'objet dans la table de lookup
-		// Pour l'instant, on n'inscrit que le nom de l'OME et la référence
-		// À terme, il sera p-ê nécessaire d'exploiter la signature de la classe
-		// (optimisation)
-		// À partir de là, vérifier s'il existe une requête en cours à 
-		// laquelle associer l'Objet Symphony tout juste enregistré (en tant
-		// que destination !!!!)
-		SymphonyObject sourceObject = getReqSourceObject(obj) ;
-		if (sourceObject != null) {
-			bind(sourceObject, obj) ;
-		}
-		
-		return true ;
-			
-	}
 
 	private SymphonyObject getReqSourceObject(final SymphonyObject obj) {
 		/*
@@ -283,24 +195,20 @@ public class Invoker {
 		 * 3.	Sachant que l'objet vient juste d'être créé, déclarer un bind
 		 * 		entre l'objet source de la requête en cours et l'objet courant
 		 */
+		if (currentRequest == null || !currentRequest.getRequestState().equals(SENT)) return null ;
 		
+		SymphonyObject sourceObject = currentRequest.getAssociatedSymphonyObject();
+
+		BrokerReference brkRef = referenceTable.get(getSObjectName(sourceObject));
+
 		SymphonyObject returnValue = null;
-		if (currentRequest != null
-				&& currentRequest.getRequestState().equals(SENT)) {
-			SymphonyObject sourceObject = currentRequest
-					.getAssociatedSymphonyObject();
-
-			BrokerReference brkRef = referenceTable
-					.get(getSObjectName(sourceObject));
-
-			for (ReferenceElement singleReference : brkRef.getDestinations()) {
-				if (singleReference.klazz.isAssignableFrom(obj.getClass())) {
-					returnValue = sourceObject ;
-					break ;
-				}
+		for (ReferenceElement singleReference : brkRef.getDestinations()) {
+			if (singleReference.klazz.isAssignableFrom(obj.getClass())) {
+				returnValue = sourceObject ;
+				break ;
 			}
-
 		}
+
 		return returnValue;
 	}
 	
@@ -399,11 +307,18 @@ public class Invoker {
 	}
 	
 	/**
-	 * Invokes the method described in the proc parameter. Throws NoSuchMethodException if 
-	 * no matching method exists. Note that the invoked method should be <code>public</code>.
-	 * <br />
+	 * Invokes the method described in the current request on the <code>proc</code> argument.
+	 * Note that the invoked method should be <code>public</code>.<br /><br />
+	 * 
+	 * Throws <code>NoSuchMethodException</code> if 
+	 * no matching method exists.<br /><br />
+	 * 
+	 * The exceptions thrown by the target method are funneled into an <code>InvocationTargetException</code>.
+	 * The details of the original exception can be accessed by calling <code>getCause()</code>
+	 * or <code>getTargetException()</code> on the <code>InvocationTargetException</code> instance.<br /><br />
+
 	 * Primitive arguments are unwrapped if necessary, however the invoker does not support mixing
-	 * wrapped and unwrapped arguments.
+	 * wrapped and unwrapped primitive arguments.
 	 * @param proc
 	 * @throws NoSuchMethodException
 	 * @throws InvocationTargetException 
@@ -505,34 +420,33 @@ public class Invoker {
 	
 
 	
-	/**
-	 * Explicit binding between a BO instance and an IO instance. A ConnectionTranslation is setup between
-	 * the two objects and added to the connection table of the Invoker.
-	 * 
-	 * @param source the source Symphony Object
-	 * @param target the target Symphony Object
-	 */
-	private void bind(final SymphonyObject source, final SymphonyObject target) {
+	public boolean bind(final SymphonyObject object) {
+		
+		SymphonyObject sourceObject = getReqSourceObject(object) ;
+		if (sourceObject == null) return false ;
 		
 		BrokerReference brokerRef = null ;
 		
-		for (Class<?> singleInterface : source.getClass().getInterfaces()) {
+		for (Class<?> singleInterface : sourceObject.getClass().getInterfaces()) {
 			// We get the interface name that should be that of the applicative services of the object
 			// (i.e., we check if one of the interfaces has been registered in the referenceTable
 			brokerRef = referenceTable.get(singleInterface.getName());
 			if (brokerRef != null) { break ; }
 		}
 		
-		ConnectionTranslation connection = connectionTable.get(source);
+		ConnectionTranslation connection = connectionTable.get(sourceObject);
 	
 		for (ReferenceElement singleRef : brokerRef.getDestinations()) {
 			Class<?> aReferenceClass = singleRef.klazz ;
-			if (aReferenceClass.isAssignableFrom(target.getClass())) {
-					connection.addDestination(aReferenceClass, target) ;
+			if (aReferenceClass.isAssignableFrom(object.getClass())) {
+					if (connection.getDestination(aReferenceClass) != null) return false;
+					connection.addDestination(aReferenceClass, object) ;
+					break ;
 			}
 		}	
 		
-		logger.fine("connectionTable: new link between " + source + " and " + target) ;
+		logger.fine("connectionTable: new link between " + sourceObject + " and " + object) ;
+		return true ;
 	}
 
 	public void setUnitTesting(boolean trueFalse) {

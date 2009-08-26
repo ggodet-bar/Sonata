@@ -14,6 +14,10 @@ import org.junit.Test;
 import org.sonata.framework.common.entity.AbstractEntityFactory;
 import org.sonata.framework.common.entity.EntityObjectServices;
 
+import sonata.test.unit.abstractentityfactory.sampleobject.SampleObject;
+import sonata.test.unit.abstractentityfactory.sampleobject2.SampleObject2;
+import sonata.test.unit.abstractentityfactory.sampleobjectwithtechnicalcomponent.SampleObjectWithTechnicalComponent;
+
 
 public class AbstractEntityFactoryTest {
 	
@@ -109,6 +113,12 @@ public class AbstractEntityFactoryTest {
 		SampleObject sample = (SampleObject) aFactory.createEntity(SampleObject.class) ;
 		assertNotNull (sample) ;
 		assertEquals(new Dimension(23, 34), sample.getFlatDimensions()) ;
+	}
+	
+	@Test
+	public void shouldRegisterComponentWithTechnicalInterface() {
+		boolean didRegister = aFactory.register(SampleObjectWithTechnicalComponent.class, null) ;
+		assertTrue(didRegister) ;
 	}
 	
 	@Test

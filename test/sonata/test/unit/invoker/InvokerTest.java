@@ -2,9 +2,6 @@ package sonata.test.unit.invoker;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
 
 import junit.framework.TestCase;
 
@@ -18,9 +15,9 @@ import org.sonata.framework.common.entity.EntityObject;
 import org.sonata.framework.control.exceptions.RequestOverlapException;
 import org.sonata.framework.control.invoker.BrokerReference;
 import org.sonata.framework.control.invoker.Invoker;
+import org.sonata.framework.control.invoker.InvokerDAO;
 import org.sonata.framework.control.invoker.ReferenceElement;
 import org.sonata.framework.control.invoker.Request;
-import org.sonata.framework.control.invoker.InvokerDAO;
 
 public class InvokerTest extends TestCase {
 	
@@ -110,17 +107,17 @@ public class InvokerTest extends TestCase {
 	}
 	
 	@Test
-	public final void testRegisterValidObjects() {
+	public final void testDontBindEmptyConnections() {
 		loadConnection() ;
 		
 		// The Invoker should register valid objects
-		SampleObject sample = new SampleObjectImpl(null) ;
-		boolean isObjectRegistered = theInvoker.register((SymphonyObject) sample) ;
-		assertTrue(isObjectRegistered) ;
+		SampleObject sample = new SampleObjectImpl() ;
+		boolean isObjectRegistered = theInvoker.bind((SymphonyObject) sample) ;
+		assertFalse(isObjectRegistered) ;
 		
-		SampleObject2 sample2 = new SampleObject2Impl(null) ;
-		isObjectRegistered = theInvoker.register((SymphonyObject) sample2) ;
-		assertTrue(isObjectRegistered) ;
+		SampleObject2 sample2 = new SampleObject2Impl() ;
+		isObjectRegistered = theInvoker.bind((SymphonyObject) sample2) ;
+		assertFalse(isObjectRegistered) ;
 		
 		// Note that, even though both objects are described as part of a connection,
 		// the binding occurs only if a SampleObject2 is created in the context of 
@@ -128,35 +125,14 @@ public class InvokerTest extends TestCase {
 
 	}
 	
-	@Test
-	public final void testRegisterIncorrectlyStructuredObject() {
-		loadConnection() ;
-
-		AnyObject anyObject = new AnyObject() ;
-		boolean isObjectRegistered = theInvoker.register(anyObject) ;
-		assertFalse(isObjectRegistered) ;
-	}
-	
-	@Test
-	public final void testShouldNotRegisterSameObjectTwice() {
-		loadConnection() ;
-
-		SampleObject sample = new SampleObjectImpl(null) ;
-		theInvoker.register((SymphonyObject) sample) ;
-		
-		boolean isObjectRegistered = theInvoker.register((SymphonyObject) sample) ;
-		assertFalse(isObjectRegistered) ;
-	}
-	
-	
 	
 	@Test
 	public final void testCreateRequest() {
 		Request req ;
 		
 		loadConnection() ;
-		SampleObject sample = new SampleObjectImpl(null) ;
-		theInvoker.register((SymphonyObject) sample) ;
+		SampleObject sample = new SampleObjectImpl() ;
+		theInvoker.bind((SymphonyObject) sample) ;
 		try {
 			req = theInvoker.createRequest((EntityObject)sample, "translateCall", null) ;
 			assertNotNull(req) ;
@@ -180,8 +156,8 @@ public class InvokerTest extends TestCase {
 	public final void  testShouldThrowRequestOverlapException() {
 		boolean exceptionThrown = false ;
 		loadConnection() ;
-		SampleObject sample = new SampleObjectImpl(null) ;
-		theInvoker.register((SymphonyObject) sample) ;
+		SampleObject sample = new SampleObjectImpl() ;
+		theInvoker.bind((SymphonyObject) sample) ;
 		try {
 			theInvoker.createRequest((EntityObject)sample, "translateCall", null) ;
 			theInvoker.createRequest((EntityObject)sample, "translateCall", null) ;
@@ -199,8 +175,8 @@ public class InvokerTest extends TestCase {
 		boolean exceptionNotThrown = true ;
 		Request req ;
 		loadConnection() ;
-		SampleObject sample = new SampleObjectImpl(null) ;
-		theInvoker.register((SymphonyObject) sample) ;
+		SampleObject sample = new SampleObjectImpl() ;
+		theInvoker.bind((SymphonyObject) sample) ;
 		
 		try {
 			req = theInvoker.createRequest((EntityObject)sample, "callWithParameters", null) ;
@@ -232,8 +208,8 @@ public class InvokerTest extends TestCase {
 		boolean exceptionThrown = false ;
 		Request req ;
 		loadConnection() ;
-		SampleObject sample = new SampleObjectImpl(null) ;
-		theInvoker.register((SymphonyObject) sample) ;
+		SampleObject sample = new SampleObjectImpl() ;
+		theInvoker.bind((SymphonyObject) sample) ;
 		
 		try {
 			req = theInvoker.createRequest((EntityObject)sample, "callWithNonUniformParameters", null) ;
@@ -263,8 +239,8 @@ public class InvokerTest extends TestCase {
 	public final void testShouldCatchExceptionsSentFromTranslation() {
 		boolean isExceptionThrown = false ;
 		loadConnection() ;
-		SampleObject sample = new SampleObjectImpl(null) ;
-		theInvoker.register((SymphonyObject) sample) ;
+		SampleObject sample = new SampleObjectImpl() ;
+		theInvoker.bind((SymphonyObject) sample) ;
 		
 		try {
 			theInvoker.createRequest((EntityObject)sample, "throwException", null) ;
@@ -318,16 +294,11 @@ interface SampleObject2 {
 class SampleObject2Impl implements SampleObject2, EntityObject {
 	String address ;
 	
-	public SampleObject2Impl(Properties prop) {
-		if (prop != null) {
-			address = prop.getProperty("address") ;
-		}
-	}
-	
 	@Override
 	public String address() {
 		return address ;
 	}
+
 }
 
 ///////////////////////////////////////////////////////////////
@@ -340,12 +311,6 @@ interface SampleObject {
 
 class SampleObjectImpl implements SampleObject, EntityObject {
 	private String username ;
-	
-	public SampleObjectImpl(Properties prop) {
-		if (prop != null) {
-			username = prop.getProperty("username") ;
-		}
-	}
 	
 	public String username() {
 		return username ;

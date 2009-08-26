@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.sonata.framework.common.AbstractFactory;
-import org.sonata.framework.common.entity.EntityObjectServices;
+import org.sonata.framework.control.exceptions.IllegalSymphonyComponent;
 import org.sonata.framework.control.invoker.Invoker;
 
 public class AbstractEntityFactory extends AbstractFactory {
@@ -20,6 +20,7 @@ public class AbstractEntityFactory extends AbstractFactory {
 //	private Map<Class<?>, Class<EntityObject>> soStructureMapping ;
 	private ClassLoader	classLoader ;
 	private PropertyInjector injector ;
+	private TechnicalComponentLoader techCompLoader ;
 	
 	/**
 	 * Map of all Symphony Object instances for each Symphony Object type
@@ -33,6 +34,7 @@ public class AbstractEntityFactory extends AbstractFactory {
 		properties = new HashMap<Class<?>, Properties>() ;
 		classLoader = Thread.currentThread().getContextClassLoader() ;
 		injector = new PropertyInjector() ;
+		techCompLoader = new TechnicalComponentLoader() ;
 	}
 	
 	public synchronized static AbstractEntityFactory getInstance() {
@@ -44,10 +46,17 @@ public class AbstractEntityFactory extends AbstractFactory {
 	
 	
 	// TODO Au besoin rajouter une description de la structure de l'objet Symphony
-	// (quelle noms de classe)
+	// (quels noms de classe)
 	public boolean register(final Class<?> klazz, final Properties prop) {
 		properties.put(klazz, prop) ;
 		instances_m.put(klazz, new ArrayList<EntityObject>()) ;
+		
+		try {
+			techCompLoader.registerTechnicalInterfaces(klazz) ;
+		} catch (IllegalSymphonyComponent e) {
+			e.printStackTrace();
+			return false ;
+		}
 		return true ;
 	}
 	
@@ -120,6 +129,10 @@ public class AbstractEntityFactory extends AbstractFactory {
 				Properties prop = properties.get(klazz) ;
 				anInstance = constructor.newInstance() ;
 				anInstance = injector.inject(klazz, anInstance, prop) ;
+				
+				/*
+				 * TODO Instanciate the technical components!
+				 */
 			} catch (SecurityException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -146,7 +159,7 @@ public class AbstractEntityFactory extends AbstractFactory {
 		}
 		
 		add(klazz, anInstance) ;
-		Invoker.getInstance().register(anInstance) ;
+		Invoker.getInstance().bind(anInstance) ;
 		return anInstance;
 	}
 	
