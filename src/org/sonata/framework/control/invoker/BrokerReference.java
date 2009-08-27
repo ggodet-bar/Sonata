@@ -33,9 +33,9 @@ public class BrokerReference {
 	
 	public int hashCode() {
 		int hash = 7 ;
-		hash = hash * 31 + source.klazz.getName().hashCode() ;
+		hash = hash * 31 + source.getReferenceClass().getName().hashCode() ;
 		hash = hash * 31 + destinations.size() ;
-		hash = hash * 31 + destinations.get(0).klazz.getName().hashCode() ;
+		hash = hash * 31 + destinations.get(0).getReferenceClass().getName().hashCode() ;
 		hash = hash * 31 + translation.getName().hashCode() ;
 		return hash ;
 	}
@@ -57,7 +57,7 @@ public class BrokerReference {
 	}
 	
 	public String getIndex() {
-		return this.source.klazz.getName() ;
+		return this.source.getReferenceClass().getName() ;
 	}
 	
 	public void setProxy(Class<ProcessObject> proxy) {
@@ -87,6 +87,6 @@ public class BrokerReference {
 	}
 	
 	private boolean isReferenceElementValid(ReferenceElement element) {
-		return element.klazz != null && element.type != null ;
+		return element.getReferenceClass() != null && element.getReferenceType() != null ;
 	}
 }

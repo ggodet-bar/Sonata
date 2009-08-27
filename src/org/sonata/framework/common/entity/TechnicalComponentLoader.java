@@ -13,8 +13,17 @@ import java.util.Map;
 import org.sonata.framework.common.TechnicalComponent;
 import org.sonata.framework.control.exceptions.IllegalSymphonyComponent;
 
+/**
+ * 
+ * @author Guillaume Godet-Bar
+ *
+ */
 class TechnicalComponentLoader {
 
+	/**
+	 * The map that associates the Object Symphony interfaces with the list
+	 * of interfaces that extends <code>TechnicalComponent</code>.
+	 */
 	private Map<Class<?>, List<Class<? extends TechnicalComponent>>> technicalInterfaces ;
 
 	public TechnicalComponentLoader () {
@@ -35,8 +44,8 @@ class TechnicalComponentLoader {
 	}
 	
 	/**
-	 * Returns an unmodifiable list of interfaces that extend the type <code>TechnicalComponent
-	 * </code>, for class <code>klazz</code>
+	 * Returns an unmodifiable list of interfaces that extend the type 
+	 * <code>TechnicalComponent</code>, for class <code>klazz</code>.
 	 * @param klazz a Symphony Object interface
 	 * @return
 	 */
@@ -45,7 +54,13 @@ class TechnicalComponentLoader {
 	}
 	
 	
-	
+	/**
+	 * Returns the list of interfaces that extend the type <code>TechnicalComponent</code>,
+	 * for class <code>baseClass</code>.
+	 * @param baseClass a Symphony Object interface
+	 * @return 
+	 * @throws IllegalSymphonyComponent
+	 */
 	private List<Class<? extends TechnicalComponent>> listInterfaces(Class<?> baseClass) throws IllegalSymphonyComponent {
 		List<Class<? extends TechnicalComponent>> technicalInterfaces = new ArrayList<Class<? extends TechnicalComponent>>() ;
 		
@@ -69,6 +84,12 @@ class TechnicalComponentLoader {
 		return technicalInterfaces;
 	}
 	
+	/**
+	 * Returns the name of the package (namespace) which contains
+	 * the Object Symphony interface.
+	 * @param baseClass
+	 * @return
+	 */
 	private String getNamespace(Class<?> baseClass) {
 		String className = baseClass.getName() ;
 		List<String> nameElements = Arrays.asList(className.split("\\.")) ;
@@ -84,12 +105,24 @@ class TechnicalComponentLoader {
 	/*
 	 * TODO Scan the jar files!
 	 */
+	/**
+	 * Returns the list of files for each subdirectory (or subpackage) of the
+	 * directory <code>baseDir</code>, which corresponds to the package name
+	 * <code>namespace</code>.
+	 */
 	private List<String> scanSubDirectories(File baseDir, String namespace) {
 		List<String> result = new LinkedList<String>() ;
 		recScanSubDirectories(baseDir, result, namespace) ;
 		return result;
 	}
 
+	/**
+	 * Recursive method which actually realizes the contract of method 
+	 * <code>scanSubDirectories</code>.
+	 * @param baseDir
+	 * @param result an accumulator for the current results
+	 * @param currentNamespace
+	 */
 	private void recScanSubDirectories(File baseDir, List<String> result, String currentNamespace) {
 		for (File aFile: baseDir.listFiles()) {
 			if (aFile.isDirectory()) {
@@ -101,6 +134,12 @@ class TechnicalComponentLoader {
 		
 	}
 
+	/**
+	 * Returns the File object that corresponds to the filesystem directory
+	 * matching the <code>namespace</code> package.
+	 * @param namespace
+	 * @return 
+	 */
 	private File getBaseDirectory(String namespace) {
 		
 		List<String> pathElements = Arrays.asList(namespace.split("\\.")) ;

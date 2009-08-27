@@ -6,6 +6,11 @@ import java.util.Map;
 
 import org.sonata.framework.common.process.ProcessObject;
 
+/**
+ * 
+ * @author Guillaume Godet-Bar
+ *
+ */
 public abstract class ConnectionTranslation {
 
 	// Map de toutes les connections g�r�es par chaque classe translation.

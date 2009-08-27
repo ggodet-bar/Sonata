@@ -1,10 +1,11 @@
 package org.sonata.framework.control.invoker;
 
+import static org.sonata.framework.control.invoker.RequestState.SENT;
+
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,8 +20,6 @@ import org.sonata.framework.common.entity.EntityObject;
 import org.sonata.framework.common.process.ProcessObject;
 import org.sonata.framework.control.exceptions.InvalidSOConnection;
 import org.sonata.framework.control.exceptions.RequestOverlapException;
-
-import static org.sonata.framework.control.invoker.RequestState.*;
 
 
 /**
@@ -203,7 +202,7 @@ public class Invoker {
 
 		SymphonyObject returnValue = null;
 		for (ReferenceElement singleReference : brkRef.getDestinations()) {
-			if (singleReference.klazz.isAssignableFrom(obj.getClass())) {
+			if (singleReference.getReferenceClass().isAssignableFrom(obj.getClass())) {
 				returnValue = sourceObject ;
 				break ;
 			}
@@ -419,7 +418,13 @@ public class Invoker {
 	
 	
 
-	
+	/**
+	 * Connects, if necessary, the <code>object</code> Symphony Object
+	 * with the correct source Symphony Object.
+	 * @param object
+	 * @return <code>true</code> if a binding between the <code>object</code> and another
+	 * Symphony Object did occur; <code>false</code> otherwise.
+	 */
 	public boolean bind(final SymphonyObject object) {
 		
 		SymphonyObject sourceObject = getReqSourceObject(object) ;
@@ -437,7 +442,7 @@ public class Invoker {
 		ConnectionTranslation connection = connectionTable.get(sourceObject);
 	
 		for (ReferenceElement singleRef : brokerRef.getDestinations()) {
-			Class<?> aReferenceClass = singleRef.klazz ;
+			Class<?> aReferenceClass = singleRef.getReferenceClass() ;
 			if (aReferenceClass.isAssignableFrom(object.getClass())) {
 					if (connection.getDestination(aReferenceClass) != null) return false;
 					connection.addDestination(aReferenceClass, object) ;

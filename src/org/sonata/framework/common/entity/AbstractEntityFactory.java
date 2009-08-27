@@ -99,16 +99,12 @@ public class AbstractEntityFactory extends AbstractFactory {
 		return resultValue ;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.sonata.framework.common.entity.test#listeInstances()
-	 */
+
 	public List<EntityObject> instances(Class<?> klazz) {
 		return instances_m.get(klazz) ;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.sonata.framework.common.entity.test#rechercher(int)
-	 */
+
 	public EntityObject search(Class<?> klazz, final int identifier) {
 		EntityObject returnValue = null;
 		if (identifier <= instances_m.get(klazz).size()) {
