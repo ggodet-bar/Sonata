@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.sonata.framework.common.ConnectionTranslation;
 import org.sonata.framework.common.ReferenceType;
-import org.sonata.framework.common.SymphonyObject;
 import org.sonata.framework.common.process.ProcessObject;
 
 public class BrokerReference {

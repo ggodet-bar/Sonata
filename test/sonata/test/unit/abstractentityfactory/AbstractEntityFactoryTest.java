@@ -1,12 +1,14 @@
 package sonata.test.unit.abstractentityfactory;
 
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Dimension;
 import java.util.Properties;
+import java.util.Arrays;
 
 import org.junit.After;
 import org.junit.Before;
@@ -89,6 +91,26 @@ public class AbstractEntityFactoryTest {
 		SampleObject2 sample2 = (SampleObject2) aFactory.createEntity(SampleObject2.class) ;
 		assertNotNull (sample2) ;
 		assertEquals ("Wall Street, NYC, United States of America", sample2.getAddress()) ;
+	}
+	
+	/*
+	 * TODO Test is only valid for a given class!
+	 */
+	@Test
+	public void testRegisteredObjectsShouldHaveAUniqueId() {
+		int[] identifiers = new int[2000] ;
+		aFactory.register(SampleObject.class, null) ;
+		
+		for (int i = 0 ; i < 2000 ; i++) {
+			SampleObject obj = (SampleObject)aFactory.createEntity(SampleObject.class) ;
+			int objID = ((EntityObjectServices)obj).getID() ;
+			int searchResult = Arrays.binarySearch(identifiers, objID) ;
+			
+			// The search result should be negative, that is, objID should not appear in identifiers[];
+			assertTrue(searchResult < 0) ;
+			identifiers[i] =  objID ;
+		}
+		
 	}
 	
 	@Test
@@ -183,9 +205,16 @@ public class AbstractEntityFactoryTest {
 			aFactory.createEntity(SampleObject2.class) ;
 		}
 		
-		boolean deletionDone = aFactory.delete(SampleObject.class, 999) ;
+		SampleObject anObject = (SampleObject) aFactory.instances(SampleObject.class).get(999) ;
+		int objID = ((EntityObjectServices)anObject).getID() ;
+		assertNotNull(aFactory.search(SampleObject.class, objID)) ;
+		assertNull(aFactory.search(SampleObject2.class, objID)) ;
+		
+		
+		boolean deletionDone = aFactory.delete(SampleObject.class, objID) ;
 		
 		assertTrue(deletionDone) ;
+		assertNull(aFactory.search(SampleObject.class, objID)) ;
 		assertEquals(1999, aFactory.instances(SampleObject.class).size()) ;
 		assertEquals(2000, aFactory.instances(SampleObject2.class).size()) ;
 		
