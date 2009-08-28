@@ -11,15 +11,14 @@ import org.sonata.framework.common.ConnectionTranslation;
 import org.sonata.framework.common.ReferenceType;
 import org.sonata.framework.common.SymphonyObject;
 import org.sonata.framework.common.process.ProcessObject;
-import org.sonata.framework.control.exceptions.ParsingException;
 
 /**
  * Sample Implementation of the <code>InvokerDAO</code> interface for loading connection 
  * data from an XML source.
  * Prior to the call to the <code>getBrokerReferences()</code> method, the XML file 
- * must first be defined using <code>setXMLFilePath</code>. A 
- * <code>SOConnections.xml</code> file will be assumed by default. Then, the file data
- * must be parsed using the <code>parseXmlFile()</code> method.
+ * must be loaded and parsed using either versions of <code>parseXmlFile()</code>.
+ * <code>parseXmlFile(String filename)</code>.
+ * 
  * 
  * @author Guillaume Godet-Bar
  */
@@ -30,38 +29,28 @@ public class XMLInvokerDAO extends InvokerDAO {
 	private String xmlFilePath = null ;
 	
 	private static List<Element> dataStructure ;
-
-	public void setXMLFilePath(final String filePath) {
-		xmlFilePath = filePath ;
-	}
 	
-	public boolean parseXmlFile() throws ParsingException {
+	public void parseXmlFile(final String filePath) throws JDOMException, IOException {
+		xmlFilePath = filePath ;
 		loadDataStructure() ;
 		try {
 			parseReferences() ;
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		return true ;
 	}
 	
-	private void loadDataStructure() throws ParsingException {
-		if (xmlFilePath == null) {
-			xmlFilePath = XML_FILE_DEFAULT_PATH ;
-		}
+	public void parseXmlFile() throws JDOMException, IOException {
+		parseXmlFile(XML_FILE_DEFAULT_PATH) ;
+	}
+	
+	private void loadDataStructure() throws JDOMException, IOException {
 		Document xmlData;
-		try {
-			// TODO Eventually set the validation to true
-			xmlData = new SAXBuilder(false).build(xmlFilePath);
-			dataStructure = (List<Element>) xmlData.getRootElement().getChildren(
+		// TODO Eventually set the validation to true
+		xmlData = new SAXBuilder(false).build(xmlFilePath);
+		dataStructure = (List<Element>) xmlData.getRootElement().getChildren(
 					"SOConnection");
-		} catch (JDOMException e) {
-			throw new ParsingException("\nMalformed XML file.\nTrace :\n"
-					+ e.getMessage()) ;
-		} catch (IOException e) {
-			throw new ParsingException("\nCould not load connection file.\nTrace :\n"
-							+ e.getMessage());
-		}
+
 	}
 	
 	/**
@@ -70,7 +59,7 @@ public class XMLInvokerDAO extends InvokerDAO {
 	 * @throws ParsingException
 	 * @throws ClassNotFoundException
 	 */
-	private void parseReferences() throws ParsingException, ClassNotFoundException {
+	private void parseReferences() throws ClassNotFoundException {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader() ;
 		Class<SymphonyObject> sourceClass = null ;
 		Class<ConnectionTranslation> translationClass = null ;

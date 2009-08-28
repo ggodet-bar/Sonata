@@ -1,4 +1,4 @@
-package sonata.test.unit.invokerdao;
+package sonata.test.unit.xmlinvokerdao;
 
 
 import static org.junit.Assert.*;
@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sonata.framework.common.entity.EntityObject;
 import org.sonata.framework.common.process.ProcessObject;
-import org.sonata.framework.control.exceptions.ParsingException;
 import org.sonata.framework.control.invoker.BrokerReference;
 import org.sonata.framework.control.invoker.ReferenceElement;
 import org.sonata.framework.control.invoker.XMLInvokerDAO;
@@ -44,16 +43,14 @@ public class XMLInvokerDAOTest {
 	
 	@Test
 	public final void testParsing() {
-		boolean parseResult = false ;
 		boolean exceptionNotThrown = true ;
 		try {
-			parseResult = loader.parseXmlFile() ;
-		} catch (ParsingException e) {
+			loader.parseXmlFile() ;
+		} catch (Exception e) {
 			exceptionNotThrown = false ;
 			e.printStackTrace();
 		}
 		assertTrue(exceptionNotThrown) ;
-		assertTrue(parseResult) ;
 		
 		List<BrokerReference> references = loader.getBrokerReferences() ;
 		
@@ -92,9 +89,9 @@ interface XMLFile {
 		"<SOConnections xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'" +
 			" xsi:schemaLocation='file://Schemas/SOConnections.xsd'>\n" +
 		"	<SOConnection>\n" +
-		"		<source type='IOE' name='sonata.test.unit.invokerdao.SampleObject' />\n" +
-		"		<destination type='BOE' name='sonata.test.unit.invokerdao.SampleObject2' />\n" +
-		"		<translation name='sonata.test.unit.invokerdao.SampleObjectTranslation' />\n" +
+		"		<source type='IOE' name='sonata.test.unit.xmlinvokerdao.SampleObject' />\n" +
+		"		<destination type='BOE' name='sonata.test.unit.xmlinvokerdao.SampleObject2' />\n" +
+		"		<translation name='sonata.test.unit.xmlinvokerdao.SampleObjectTranslation' />\n" +
 		"	</SOConnection>\n" +
 		"</SOConnections>\n" ;
 

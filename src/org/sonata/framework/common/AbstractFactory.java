@@ -3,13 +3,6 @@ package org.sonata.framework.common;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Abstract class for managing Symphony Object instances. Every SO component should 
- * integrate a Factory class that extends <code>AbstractEntityFactory</code>.
- * 
- * @author godetg
- *
- */
 public class AbstractFactory {
 
 	/**

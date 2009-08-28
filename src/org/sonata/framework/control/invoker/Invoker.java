@@ -74,10 +74,9 @@ public class Invoker {
 	private transient boolean hasReturnedObject ;
 	
 	/**
-	 * Liste des connections AUTORISEES (pas de connexions effectives...)
-	 * On répertorie ci-desssous aussi bien les connexions entre OME/OIE qu'entre
-	 * OMP/OIP (mêmes mécanismes --> connexion orientée)
-	 */ 
+	 * List of <b>authorized</b> connections between Interactionnal and Business
+	 * Objects, as well as the Translation class associated to each connection.
+	 */
 	private final transient Map<String, BrokerReference> referenceTable ;
 	
 	/**

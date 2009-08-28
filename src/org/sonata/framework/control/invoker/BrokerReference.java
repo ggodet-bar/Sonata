@@ -40,7 +40,7 @@ public class BrokerReference {
 		return hash ;
 	}
 	
-	public void setSource(Class<SymphonyObject> klazz, ReferenceType type) {
+	public void setSource(Class<?> klazz, ReferenceType type) {
 		ReferenceElement reference = new ReferenceElement(klazz, type) ;
 		this.source = isReferenceElementValid(reference) ? reference : null ;
 		if (klazz != null && type != null) {

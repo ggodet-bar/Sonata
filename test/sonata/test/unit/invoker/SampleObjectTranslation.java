@@ -5,11 +5,11 @@ import org.sonata.framework.common.SymphonyObject;
 import org.sonata.framework.common.process.ProcessObject;
 
 public class SampleObjectTranslation extends ConnectionTranslation {
-
-	public SampleObjectTranslation(SymphonyObject source, ProcessObject proxy) {
-		super(source, proxy) ;
-	}
 	
+	public SampleObjectTranslation(SymphonyObject source, ProcessObject proxy) {
+		super(source, proxy);
+	}
+
 	public void translateCall() {
 		System.out.println("translateCall") ;
 	}
