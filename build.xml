@@ -13,6 +13,7 @@
 	
 	<path id="classpath">
 		<fileset dir="${lib.dir}" includes="**/*.jar"/>
+		<pathelement location="${jsonpath}" />
 		<fileset file="${aspectjpath}/lib/aspectjrt.jar" />
 	</path>
 	
@@ -30,7 +31,11 @@
 
 	<target name="compile">
 		<mkdir dir="bin" />
-		<aspectj:iajc srcdir="src" destDir="bin" classpathref="classpath" source="1.5" target="1.5"/>
+		<!-- Capture the path as a delimited property using the refid attribute -->
+		<property name="myclasspath" refid="classpath"/>
+		<!-- Emit the property to the ant console -->
+		<echo message="Classpath = ${myclasspath}"/>
+		<aspectj:iajc srcdir="src" destDir="bin" classpathref="classpath" source="1.6" target="1.6"/>
 	</target>
 	
 	<target name="jar" depends="compile">
