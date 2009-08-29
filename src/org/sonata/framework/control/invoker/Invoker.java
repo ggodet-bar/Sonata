@@ -71,7 +71,7 @@ public class Invoker {
 	/**
 	 * Flag pour signalement d'un retour de requête
 	 */ 
-	private transient boolean hasReturnedObject ;
+//	private transient boolean hasReturnedObject ;
 	
 	/**
 	 * List of <b>authorized</b> connections between Interactionnal and Business
@@ -403,7 +403,7 @@ public class Invoker {
 		try {
 			returnObject = method.invoke(liveConnection,
 					currentRequest.getParamArray().toArray());
-			hasReturnedObject = (returnObject != null);
+//			hasReturnedObject = (returnObject != null);
 		} catch (IllegalArgumentException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

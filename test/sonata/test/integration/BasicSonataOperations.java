@@ -17,7 +17,7 @@ import org.sonata.framework.common.entity.AbstractEntityFactory;
 import org.sonata.framework.common.entity.EntityObject;
 import org.sonata.framework.common.process.ProcessObject;
 import org.sonata.framework.control.invoker.Invoker;
-import org.sonata.framework.control.request.Request;
+import org.sonata.framework.control.invoker.Request;
 
 
 /**
@@ -112,7 +112,7 @@ class SampleObjectTranslation extends ConnectionTranslation {
 	}
 	
 	public void translateCall() {
-		AbstractEntityFactory.instance.createEntity(SampleObject2.class) ;
+		AbstractEntityFactory.getInstance().createEntity(SampleObject2.class) ;
 	}
 }
 

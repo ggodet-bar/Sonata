@@ -17,8 +17,6 @@ import org.sonata.framework.common.process.ProcessObject;
  * data from an XML source.
  * Prior to the call to the <code>getBrokerReferences()</code> method, the XML file 
  * must be loaded and parsed using either versions of <code>parseXmlFile()</code>.
- * <code>parseXmlFile(String filename)</code>.
- * 
  * 
  * @author Guillaume Godet-Bar
  */

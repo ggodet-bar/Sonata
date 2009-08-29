@@ -47,7 +47,7 @@ class TechnicalComponentLoader {
 	 * Returns an unmodifiable list of interfaces that extend the type 
 	 * <code>TechnicalComponent</code>, for class <code>klazz</code>.
 	 * @param klazz a Symphony Object interface
-	 * @return
+	 * @return the list of interfaces
 	 */
 	public List<Class<? extends TechnicalComponent>> getTechnicalInterfacesForSO(Class<?> klazz) {
 		return Collections.unmodifiableList(technicalInterfaces.get(klazz)) ;
@@ -58,7 +58,7 @@ class TechnicalComponentLoader {
 	 * Returns the list of interfaces that extend the type <code>TechnicalComponent</code>,
 	 * for class <code>baseClass</code>.
 	 * @param baseClass a Symphony Object interface
-	 * @return 
+	 * @return the list of interfaces
 	 * @throws IllegalSymphonyComponent
 	 */
 	private List<Class<? extends TechnicalComponent>> listInterfaces(Class<?> baseClass) throws IllegalSymphonyComponent {
@@ -88,7 +88,7 @@ class TechnicalComponentLoader {
 	 * Returns the name of the package (namespace) which contains
 	 * the Object Symphony interface.
 	 * @param baseClass
-	 * @return
+	 * @return the name of the package
 	 */
 	private String getNamespace(Class<?> baseClass) {
 		String className = baseClass.getName() ;
@@ -138,7 +138,7 @@ class TechnicalComponentLoader {
 	 * Returns the File object that corresponds to the filesystem directory
 	 * matching the <code>namespace</code> package.
 	 * @param namespace
-	 * @return 
+	 * @return the base directory as a File object
 	 */
 	private File getBaseDirectory(String namespace) {
 		

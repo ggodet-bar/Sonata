@@ -10,7 +10,7 @@ import org.sonata.framework.common.ReferenceType;
  * 
  * @author Guillaume Godet-Bar
  *
- * @see org.sonata.framework.common.BrokerReference
+ * @see org.sonata.framework.control.invoker.BrokerReference
  */
 public class ReferenceElement {
 	private Class<?> klazz ;

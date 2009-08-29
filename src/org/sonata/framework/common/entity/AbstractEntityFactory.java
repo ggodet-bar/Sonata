@@ -36,6 +36,10 @@ public class AbstractEntityFactory extends AbstractFactory {
 		techCompLoader = new TechnicalComponentLoader() ;
 	}
 	
+	/**
+	 * Returns the unique instance of the <code>AbstractEntityFactory</code>
+	 * @return an instance of <code>AbstractEntityFactory</code>
+	 */
 	public synchronized static AbstractEntityFactory getInstance() {
 		if (instance == null) {
 			instance = new AbstractEntityFactory() ;
@@ -43,9 +47,17 @@ public class AbstractEntityFactory extends AbstractFactory {
 		return instance ;
 	}
 	
-	
-	// TODO Au besoin rajouter une description de la structure de l'objet Symphony
-	// (quels noms de classe)
+
+	/**
+	 * Registers the Symphony Object defined by the interface <code>klazz</code>
+	 * and the list of properties <code>prop</code>.
+	 * 
+	 * @param klazz
+	 * @param prop
+	 * @return <code>true</code> if the registration process succeeded, 
+	 * or else <code>false</code> (e.g. if the class <code>klazz</code> does not
+	 * designate a valid Symphony Object).
+	 */
 	public boolean register(final Class<?> klazz, final Properties prop) {
 		properties.put(klazz, prop) ;
 		instances_m.put(klazz, new TreeMap<Integer, EntityObject>()) ;
@@ -82,6 +94,12 @@ public class AbstractEntityFactory extends AbstractFactory {
 	}
 	
 
+	/**
+	 * Returns the list of Symphony Object instances that match with the interface
+	 * <code>klazz</code>
+	 * @param klazz
+	 * @return the list of instances
+	 */
 	public List<EntityObject> instances(Class<?> klazz) {
 		return new ArrayList<EntityObject>(instances_m.get(klazz).values()) ;
 	}
@@ -142,7 +160,7 @@ public class AbstractEntityFactory extends AbstractFactory {
 	/**
 	 * Returns a unique ID. Uniqueness is guaranteed for all object instances within the same
 	 * JVM (thread?) instance.
-	 * @return
+	 * @return the unique ID
 	 */
 	private int computeUniqueID() {
 		return 13 * ++counter + 7 ;

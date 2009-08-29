@@ -7,9 +7,9 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.sonata.framework.common.entity.EntityObject;
 import org.sonata.framework.common.entity.EntityObjectServices;
 import org.sonata.framework.control.invoker.Invoker;
-import org.sonata.framework.control.request.Request;
-import org.sonata.framework.common.entity.AbstractEntityFactory;
-import sonata.test.unit.abstractentityfactory.SampleObject;
+import org.sonata.framework.control.invoker.Request;
+
+import sonata.test.unit.abstractentityfactory.sampleobject.SampleObject;
 
 @Aspect
 public class SampleObjectAspect {

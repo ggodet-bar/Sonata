@@ -17,7 +17,8 @@ class PropertyInjector {
 	 * @param klazz
 	 * @param instance
 	 * @param prop
-	 * @return
+	 * @return the Symphony Object instance into which the properties
+	 * were injected.
 	 * @throws NoSuchMethodException
 	 */
 	<T extends SymphonyObject> T inject(Class<?> klazz, T instance, Properties prop) throws NoSuchMethodException {
@@ -130,7 +131,7 @@ class PropertyInjector {
 	 * Generates all the possible setter names for the property named <code>name</code>,
 	 * based on JavaBeans conventions, and returns them as a list of strings.
 	 * @param name
-	 * @return
+	 * @return the list of generated method names
 	 */
 	private List<String> toMethodNames(String name) {
 		String baseName =  name.substring(0, 1).toUpperCase() + name.substring(1) ;
@@ -148,12 +149,11 @@ class PropertyInjector {
 	 *  <li>the same number of parameters as contained in <code>arguments</code>.</li>
 	 * </ul>
 	 * 
-	 * The method found following this algorithm is then returned.
-	 * If no method has been found, returns <code>null</code>.
 	 * @param klazz
 	 * @param methodNames
 	 * @param arguments
-	 * @return
+	 * @return the method found following the search algorithm. If no
+	 * method has been found, returns <code>null</code>.
 	 */
 	private Method getMatchingMethod(Class<?> klazz, List<String> methodNames, String... arguments) {
 		Method theMethod = null ;
