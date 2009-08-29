@@ -1,14 +1,16 @@
 package sonata.test.unit.abstractentityfactory;
 
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Dimension;
-import java.util.Properties;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 
 import org.junit.After;
 import org.junit.Before;
@@ -19,6 +21,8 @@ import org.sonata.framework.common.entity.EntityObjectServices;
 import sonata.test.unit.abstractentityfactory.sampleobject.SampleObject;
 import sonata.test.unit.abstractentityfactory.sampleobject2.SampleObject2;
 import sonata.test.unit.abstractentityfactory.sampleobjectwithtechnicalcomponent.SampleObjectWithTechnicalComponent;
+import sonata.test.unit.abstractentityfactory.sampleobjectwithtechnicalcomponent.TechnicalImplementation;
+import sonata.test.unit.abstractentityfactory.sampleobjectwithtechnicalcomponent.TechnicalInterface;
 
 
 public class AbstractEntityFactoryTest {
@@ -62,7 +66,7 @@ public class AbstractEntityFactoryTest {
 	public void shouldRegisterEntityObject() {
 		Properties prop = new Properties() ;
 		prop.setProperty("username", "Bob") ;
-		boolean isRegistered = aFactory.register(SampleObject.class, prop) ;
+		boolean isRegistered = aFactory.register(SampleObject.class, prop, null) ;
 		assertTrue(isRegistered) ;
 		
 		SampleObject sample = (SampleObject) aFactory.createEntity(SampleObject.class) ;
@@ -80,8 +84,8 @@ public class AbstractEntityFactoryTest {
 		Properties prop1 = new Properties(), prop2 = new Properties() ;
 		prop1.setProperty("username", "Albert") ;
 		prop2.setProperty("address", "\"Wall Street, NYC, United States of America\"") ;
-		aFactory.register(SampleObject.class, prop1) ;
-		boolean isRegistered = aFactory.register(SampleObject2.class, prop2) ;
+		aFactory.register(SampleObject.class, prop1, null) ;
+		boolean isRegistered = aFactory.register(SampleObject2.class, prop2, null) ;
 		assertTrue(isRegistered) ;
 
 		SampleObject sample = (SampleObject) aFactory.createEntity(SampleObject.class) ;
@@ -99,7 +103,7 @@ public class AbstractEntityFactoryTest {
 	@Test
 	public void testRegisteredObjectsShouldHaveAUniqueId() {
 		int[] identifiers = new int[2000] ;
-		aFactory.register(SampleObject.class, null) ;
+		aFactory.register(SampleObject.class, null, null) ;
 		
 		for (int i = 0 ; i < 2000 ; i++) {
 			SampleObject obj = (SampleObject)aFactory.createEntity(SampleObject.class) ;
@@ -119,7 +123,7 @@ public class AbstractEntityFactoryTest {
 		prop1.setProperty("username", "Albert") ;
 		prop1.setProperty("age", "22") ;
 		prop1.setProperty("male", "true") ;
-		aFactory.register(SampleObject.class, prop1) ;
+		aFactory.register(SampleObject.class, prop1, null) ;
 		SampleObject sample = (SampleObject) aFactory.createEntity(SampleObject.class) ;
 		
 		assertNotNull (sample) ;
@@ -131,7 +135,7 @@ public class AbstractEntityFactoryTest {
 	public void shouldSupportComplexTypeProperties() {
 		Properties prop1 = new Properties() ;
 		prop1.setProperty("flatDimensions", "23, 34") ;
-		aFactory.register(SampleObject.class, prop1) ;
+		aFactory.register(SampleObject.class, prop1, null) ;
 		SampleObject sample = (SampleObject) aFactory.createEntity(SampleObject.class) ;
 		assertNotNull (sample) ;
 		assertEquals(new Dimension(23, 34), sample.getFlatDimensions()) ;
@@ -139,8 +143,16 @@ public class AbstractEntityFactoryTest {
 	
 	@Test
 	public void shouldRegisterComponentWithTechnicalInterface() {
-		boolean didRegister = aFactory.register(SampleObjectWithTechnicalComponent.class, null) ;
+		List<String> techConfig = new ArrayList<String>() ;
+		techConfig.add("sonata.test.unit.abstractentityfactory.sampleobjectwithtechnicalcomponent.TechnicalImplementation") ;
+		boolean didRegister = aFactory.register(SampleObjectWithTechnicalComponent.class, null, techConfig) ;
 		assertTrue(didRegister) ;
+		
+		SampleObjectWithTechnicalComponent anInstance = (SampleObjectWithTechnicalComponent) aFactory.createEntity(SampleObjectWithTechnicalComponent.class) ;
+		assertNotNull(anInstance) ;
+		TechnicalInterface anInterface = anInstance.exposeTechnicalComponent() ;
+		assertNotNull(anInterface) ;
+		assertTrue(anInterface instanceof TechnicalImplementation) ;
 	}
 	
 	@Test
@@ -148,8 +160,8 @@ public class AbstractEntityFactoryTest {
 		Properties prop1 = new Properties(), prop2 = new Properties() ;
 		prop1.setProperty("username", "Albert") ;
 		prop2.setProperty("address", "\"Wall Street, NYC, United States of America\"") ;
-		aFactory.register(SampleObject.class, prop1) ;
-		aFactory.register(SampleObject2.class, prop2) ;
+		aFactory.register(SampleObject.class, prop1, null) ;
+		aFactory.register(SampleObject2.class, prop2, null) ;
 		
 		
 		// We create 2000 instances for each object, which try to access the factory
@@ -194,8 +206,8 @@ public class AbstractEntityFactoryTest {
 		Properties prop1 = new Properties(), prop2 = new Properties() ;
 		prop1.setProperty("username", "Albert") ;
 		prop2.setProperty("address", "\"Wall Street, NYC, United States of America\"") ;
-		aFactory.register(SampleObject.class, prop1) ;
-		aFactory.register(SampleObject2.class, prop2) ;
+		aFactory.register(SampleObject.class, prop1, null) ;
+		aFactory.register(SampleObject2.class, prop2, null) ;
 		
 		for (int i = 0 ; i < 2000 ; i++) {
 			aFactory.createEntity(SampleObject.class) ;

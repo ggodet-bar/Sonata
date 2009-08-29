@@ -1,10 +1,8 @@
 package org.sonata.framework.common;
 
-import java.util.List ;
+import java.util.List;
 
-import org.sonata.framework.common.entity.EntityObject ;
-import org.sonata.framework.common.entity.AbstractEntityFactory ;
-import org.sonata.framework.common.entity.EntityObjectServices ;
+import org.sonata.framework.common.entity.EntityObject;
 
 public aspect SymphonyRoleProtocol {
 

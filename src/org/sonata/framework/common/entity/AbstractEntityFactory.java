@@ -52,19 +52,23 @@ public class AbstractEntityFactory extends AbstractFactory {
 	 * Registers the Symphony Object defined by the interface <code>klazz</code>
 	 * and the list of properties <code>prop</code>.
 	 * 
-	 * @param klazz
-	 * @param prop
+	 * @param klazz the interface of the Symphony Object
+	 * @param prop the general properties of the Symphony Object
+	 * @param techProp the technical components, mapped to the corresponding interface class
 	 * @return <code>true</code> if the registration process succeeded, 
 	 * or else <code>false</code> (e.g. if the class <code>klazz</code> does not
 	 * designate a valid Symphony Object).
 	 */
-	public boolean register(final Class<?> klazz, final Properties prop) {
+	public boolean register(final Class<?> klazz, final Properties prop, final List<String> techProp) {
 		properties.put(klazz, prop) ;
 		instances_m.put(klazz, new TreeMap<Integer, EntityObject>()) ;
 		
 		try {
-			techCompLoader.registerTechnicalInterfaces(klazz) ;
+			techCompLoader.registerTechnicalInterfaces(klazz, techProp) ;
 		} catch (IllegalSymphonyComponent e) {
+			e.printStackTrace();
+			return false ;
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			return false ;
 		}
@@ -124,9 +128,8 @@ public class AbstractEntityFactory extends AbstractFactory {
 				if (prop != null) {
 					anInstance = injector.inject(klazz, anInstance, prop) ;
 				}
-				/*
-				 * TODO Instanciate the technical components!
-				 */
+				anInstance = techCompLoader.setupTechnicalComponents(klazz, anInstance) ;
+
 			} catch (SecurityException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

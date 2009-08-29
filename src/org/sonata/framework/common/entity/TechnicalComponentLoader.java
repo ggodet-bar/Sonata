@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.sonata.framework.common.TechnicalComponent;
 import org.sonata.framework.control.exceptions.IllegalSymphonyComponent;
@@ -19,15 +20,17 @@ import org.sonata.framework.control.exceptions.IllegalSymphonyComponent;
  *
  */
 class TechnicalComponentLoader {
-
+	
 	/**
 	 * The map that associates the Object Symphony interfaces with the list
 	 * of interfaces that extends <code>TechnicalComponent</code>.
 	 */
 	private Map<Class<?>, List<Class<? extends TechnicalComponent>>> technicalInterfaces ;
+	private Map<Class<?>, List<Class<? extends TechnicalComponent>>> technicalComponents ;
 
 	public TechnicalComponentLoader () {
 		technicalInterfaces = new HashMap<Class<?>, List<Class<? extends TechnicalComponent>>>() ;
+		technicalComponents = new HashMap<Class<?>, List<Class<? extends TechnicalComponent>>>() ;
 	}
 	
 	/**
@@ -36,11 +39,23 @@ class TechnicalComponentLoader {
 	 * Throws IllegalSymphonyComponent if the scanning of the namespace fails for some
 	 * reason.
 	 * @param klazz a Symphony Object interface
+	 * @param technicalProperties
 	 * @throws IllegalSymphonyComponent
+	 * @throws ClassNotFoundException 
 	 */
-	public void registerTechnicalInterfaces(Class<?> klazz) throws IllegalSymphonyComponent {
+	public void registerTechnicalInterfaces(Class<?> klazz, List<String> technicalProperties) throws IllegalSymphonyComponent, ClassNotFoundException {
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader() ;
+		
 		technicalInterfaces.put(klazz, listInterfaces(klazz)) ;
 		
+		if (technicalProperties != null) {
+			List<Class<? extends TechnicalComponent>> theComponents = new ArrayList<Class<? extends TechnicalComponent>>() ;
+			for (String aClassName : technicalProperties) {
+				Class<? extends TechnicalComponent> aClass = (Class<? extends TechnicalComponent>) classLoader.loadClass(aClassName) ;
+				theComponents.add(aClass) ;
+			}
+			technicalComponents.put(klazz, theComponents) ;
+		}
 	}
 	
 	/**
@@ -53,6 +68,21 @@ class TechnicalComponentLoader {
 		return Collections.unmodifiableList(technicalInterfaces.get(klazz)) ;
 	}
 	
+	public EntityObject setupTechnicalComponents(Class<?> klazz, EntityObject instance) throws InstantiationException, IllegalAccessException {
+		if (!technicalComponents.containsKey(klazz)) return instance ;
+		for (Class<? extends TechnicalComponent> aComponentInterface : technicalComponents.get(klazz)) {
+			// Get the actual component that implements the interface!!
+			TechnicalComponent aComponent = aComponentInterface.newInstance() ;
+			
+			for (Class<? extends TechnicalComponent> anInterface : technicalInterfaces.get(klazz)) {
+				if (Arrays.asList(aComponent.getClass().getInterfaces()).contains(anInterface)) {
+					((EntityObjectServices)instance).setTechnicalComponentInstance(anInterface, aComponent) ;
+					break ;
+				}
+			}
+		}
+		return instance ;
+	}
 	
 	/**
 	 * Returns the list of interfaces that extend the type <code>TechnicalComponent</code>,
