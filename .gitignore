@@ -5,3 +5,5 @@ bin
 doc/*
 .classpath
 .project
+.settings
+report/*
