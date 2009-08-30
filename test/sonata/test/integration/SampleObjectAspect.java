@@ -4,6 +4,7 @@ import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.sonata.framework.common.entity.AbstractEntityFactory;
 import org.sonata.framework.common.entity.EntityObject;
 import org.sonata.framework.common.entity.EntityObjectServices;
 import org.sonata.framework.control.invoker.Invoker;

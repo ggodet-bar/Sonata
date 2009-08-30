@@ -1,14 +1,10 @@
 package sonata.test.integration;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.util.Properties;
 
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.junit.Before;
 import org.junit.Test;
 import org.sonata.framework.common.ConnectionTranslation;
@@ -16,8 +12,6 @@ import org.sonata.framework.common.SymphonyObject;
 import org.sonata.framework.common.entity.AbstractEntityFactory;
 import org.sonata.framework.common.entity.EntityObject;
 import org.sonata.framework.common.process.ProcessObject;
-import org.sonata.framework.control.invoker.Invoker;
-import org.sonata.framework.control.invoker.Request;
 
 
 /**

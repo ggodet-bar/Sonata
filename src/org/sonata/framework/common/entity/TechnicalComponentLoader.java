@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.sonata.framework.common.TechnicalComponent;
 import org.sonata.framework.control.exceptions.IllegalSymphonyComponent;

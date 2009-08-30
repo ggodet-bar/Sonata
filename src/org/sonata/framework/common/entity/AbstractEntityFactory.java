@@ -9,11 +9,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
-import org.sonata.framework.common.AbstractFactory;
 import org.sonata.framework.control.exceptions.IllegalSymphonyComponent;
 import org.sonata.framework.control.invoker.Invoker;
 
-public class AbstractEntityFactory extends AbstractFactory {
+public class AbstractEntityFactory {
 	
 	private static AbstractEntityFactory instance;
 	private static int counter = 1 ;

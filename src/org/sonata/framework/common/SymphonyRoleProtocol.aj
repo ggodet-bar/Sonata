@@ -8,8 +8,10 @@ public aspect SymphonyRoleProtocol {
 
 	declare parents: (SymphonyRole+ && !SymphonyRole) implements SymphonyRoleServices ;
 	
+	@SuppressWarnings("unused")	// Apparently an AspectJ bug
 	private EntityObject SymphonyRoleServices.delegate = null;
 
+	@SuppressWarnings("unused")	// Apparently an AspectJ bug
 	private static List<EntityObject> delegates;
 
 	public EntityObject SymphonyRoleServices.getTargetSObject() {
@@ -22,9 +24,5 @@ public aspect SymphonyRoleProtocol {
 
 	public EntityObject SymphonyRoleServices.search(int objectID) {
 		return null ;
-	}
-	
-	static private void aTest() {
-		
 	}
 }
