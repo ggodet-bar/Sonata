@@ -27,7 +27,10 @@ public aspect EntityObjectProtocol {
 							= new HashMap<Class<? extends TechnicalComponent>, TechnicalComponent>();
 	
 	public void EntityObjectServices.setID(int id) {
-		this.identifier = id ;
+		// Set the identifier strictly once
+		if (this.identifier == -1) {
+			this.identifier = id ;
+		}
 	}
 	
 	public int EntityObjectServices.getID() {
