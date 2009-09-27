@@ -31,6 +31,7 @@ import org.sonata.framework.control.exceptions.RequestOverlapException;
  *	TODO Supprimer la référence à l'OIP dans l'aspect. On doit pouvoir 
  *	acquérir la bonne instance à partir de la description de la connexion
  *	(par exemple en obtenant l'instance depuis la AbstractEntityFactory !)
+ *  ou en utilisant Thread.getCurrentThread()
  */
 /*
  * 	TODO Supprimer la méthode register, qui est redondante par rapport à
@@ -52,7 +53,7 @@ public class Invoker {
 	 * 
 	 */
 	private final Map<Class<?>, List<EntityObject>> oELookupTable ;
-	private final Map<Class<?>, List<ProcessObject>>oPLookupTable ;
+	private final Map<Class<?>, ProcessObject>oPLookupTable ;
 	
 	/**
 	 * Stack of requests currently being processes. Each completed request (i.e., 
@@ -95,7 +96,7 @@ public class Invoker {
 		requestStack = new Stack<Request>() ;
 		
 		oELookupTable = new HashMap<Class<?>, List<EntityObject>>() ;
-		oPLookupTable = new HashMap<Class<?>, List<ProcessObject>>() ;
+		oPLookupTable = new HashMap<Class<?>, ProcessObject>() ;
 		
 		connectionTable = new HashMap<SymphonyObject, ConnectionTranslation>() ;
 		// Lors de l'instanciation de l'Invoker, il est nécessaire de lire
@@ -141,10 +142,21 @@ public class Invoker {
 		return referenceTable.size() ;
 	}
 	
-	public Request createRequest(final EntityObject proc, final String operationName, final ProcessObject proxy) throws RequestOverlapException {
+	public Request createRequest(final EntityObject proc, final String operationName) throws RequestOverlapException {
 
 		if (currentRequest != null && currentRequest.getRequestState() != SENT) throw new RequestOverlapException() ;
-		
+
+		// We infer the proxy from the call stack (i.e. there should
+		// be an object which implements ProcessObject on the stack)
+		ProcessObject proxy = null ;
+		for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
+			Class<?> currentCallingClass = element.getClass() ;
+			if (currentCallingClass.isAssignableFrom(ProcessObject.class)) {
+				// get the instance from the oPLookupTable
+				proxy = oPLookupTable.get(currentCallingClass) ;
+				logger.fine("The proxy for object " + proc + " is: " + proxy) ;
+			}
+		}
 		currentRequest = new Request(proc, operationName, proxy) ;
 		requestStack.push(currentRequest) ;
 		

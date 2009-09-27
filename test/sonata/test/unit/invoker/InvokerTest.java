@@ -134,7 +134,7 @@ public class InvokerTest extends TestCase {
 		SampleObject sample = new SampleObjectImpl() ;
 		theInvoker.bind((SymphonyObject) sample) ;
 		try {
-			req = theInvoker.createRequest((EntityObject)sample, "translateCall", null) ;
+			req = theInvoker.createRequest((EntityObject)sample, "translateCall") ;
 			assertNotNull(req) ;
 			
 
@@ -159,8 +159,8 @@ public class InvokerTest extends TestCase {
 		SampleObject sample = new SampleObjectImpl() ;
 		theInvoker.bind((SymphonyObject) sample) ;
 		try {
-			theInvoker.createRequest((EntityObject)sample, "translateCall", null) ;
-			theInvoker.createRequest((EntityObject)sample, "translateCall", null) ;
+			theInvoker.createRequest((EntityObject)sample, "translateCall") ;
+			theInvoker.createRequest((EntityObject)sample, "translateCall") ;
 			
 		} catch (RequestOverlapException e) {
 			exceptionThrown = true ;
@@ -179,7 +179,7 @@ public class InvokerTest extends TestCase {
 		theInvoker.bind((SymphonyObject) sample) ;
 		
 		try {
-			req = theInvoker.createRequest((EntityObject)sample, "callWithParameters", null) ;
+			req = theInvoker.createRequest((EntityObject)sample, "callWithParameters") ;
 			req.pushParameter(9) ;
 			req.pushParameter("aString") ;
 			
@@ -212,7 +212,7 @@ public class InvokerTest extends TestCase {
 		theInvoker.bind((SymphonyObject) sample) ;
 		
 		try {
-			req = theInvoker.createRequest((EntityObject)sample, "callWithNonUniformParameters", null) ;
+			req = theInvoker.createRequest((EntityObject)sample, "callWithNonUniformParameters") ;
 			req.pushParameter(new Integer(9)) ;
 			req.pushParameter(10) ;
 			req.pushParameter(new Long(11L)) ;
@@ -243,7 +243,7 @@ public class InvokerTest extends TestCase {
 		theInvoker.bind((SymphonyObject) sample) ;
 		
 		try {
-			theInvoker.createRequest((EntityObject)sample, "throwException", null) ;
+			theInvoker.createRequest((EntityObject)sample, "throwException") ;
 			boolean requestDidSucceed = theInvoker.sendRequest() ;
 			assertFalse(requestDidSucceed) ;
 		} catch (RequestOverlapException e) {
