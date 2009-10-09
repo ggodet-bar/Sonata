@@ -23,7 +23,7 @@ import org.sonata.framework.common.ReferenceType;
  * 			{	"source" : 
  * 					{"name" : qualified_name_of_the_source, "type" : type_of_the_source}
  * 				"destinations" : [
- * 						{"name" : qualified_name_of_the_destination>, "type" : type_of_the_destination},
+ * 						{"name" : qualified_name_of_the_destination, "type" : type_of_the_destination},
  * 						{...}
  * 					],
  * 				"translation" : qualified_name_of_the_translation

@@ -13,7 +13,10 @@ import org.sonata.framework.common.entity.AbstractEntityFactory;
 import org.sonata.framework.common.entity.EntityObject;
 import org.sonata.framework.common.process.ProcessObject;
 
-
+/*
+ * 
+ * TODO Should test the request getProxy method for correctness
+ */
 /**
  * This test validates the basic behaviours of Sonata, such as automatic connection 
  * between Symphony Object instances, configuration, the execution of Translation code
