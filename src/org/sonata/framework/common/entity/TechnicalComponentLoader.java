@@ -38,23 +38,25 @@ class TechnicalComponentLoader {
 	 * Throws IllegalSymphonyComponent if the scanning of the namespace fails for some
 	 * reason.
 	 * @param klazz a Symphony Object interface
-	 * @param technicalProperties
+	 * @param XXX
 	 * @throws IllegalSymphonyComponent
 	 * @throws ClassNotFoundException 
 	 */
-	public void registerTechnicalInterfaces(Class<?> klazz, List<String> technicalProperties) throws IllegalSymphonyComponent, ClassNotFoundException {
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader() ;
-		
+	public void registerTechnicalInterfaces(Class<?> klazz, List<Class<? extends TechnicalComponent>> components) throws IllegalSymphonyComponent, ClassNotFoundException {
+//		ClassLoader classLoader = Thread.currentThread().getContextClassLoader() ;
+//		
 		technicalInterfaces.put(klazz, listInterfaces(klazz)) ;
+//		
+//		if (technicalProperties != null) {
+//			List<Class<? extends TechnicalComponent>> theComponents = new ArrayList<Class<? extends TechnicalComponent>>() ;
+//			for (String aClassName : technicalProperties) {
+//				Class<? extends TechnicalComponent> aClass = (Class<? extends TechnicalComponent>) classLoader.loadClass(aClassName) ;
+//				theComponents.add(aClass) ;
+//			}
+//			technicalComponents.put(klazz, theComponents) ;
+//		}
 		
-		if (technicalProperties != null) {
-			List<Class<? extends TechnicalComponent>> theComponents = new ArrayList<Class<? extends TechnicalComponent>>() ;
-			for (String aClassName : technicalProperties) {
-				Class<? extends TechnicalComponent> aClass = (Class<? extends TechnicalComponent>) classLoader.loadClass(aClassName) ;
-				theComponents.add(aClass) ;
-			}
-			technicalComponents.put(klazz, theComponents) ;
-		}
+		technicalComponents.put(klazz, components) ;
 	}
 	
 	/**
@@ -66,11 +68,11 @@ class TechnicalComponentLoader {
 	public List<Class<? extends TechnicalComponent>> getTechnicalInterfacesForSO(Class<?> klazz) {
 		return Collections.unmodifiableList(technicalInterfaces.get(klazz)) ;
 	}
-	
+
 	public EntityObject setupTechnicalComponents(Class<?> klazz, EntityObject instance) throws InstantiationException, IllegalAccessException {
-		if (!technicalComponents.containsKey(klazz)) return instance ;
+		if (!technicalComponents.containsKey(klazz) || technicalComponents.get(klazz) == null) return instance ;
 		for (Class<? extends TechnicalComponent> aComponentInterface : technicalComponents.get(klazz)) {
-			// Get the actual component that implements the interface!!
+			// Get the actual component that implements the interface
 			TechnicalComponent aComponent = aComponentInterface.newInstance() ;
 			
 			for (Class<? extends TechnicalComponent> anInterface : technicalInterfaces.get(klazz)) {

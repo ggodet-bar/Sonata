@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
+import org.sonata.framework.common.TechnicalComponent;
 import org.sonata.framework.control.exceptions.IllegalSymphonyComponent;
 import org.sonata.framework.control.invoker.Invoker;
 
@@ -58,7 +59,7 @@ public class AbstractEntityFactory {
 	 * or else <code>false</code> (e.g. if the class <code>klazz</code> does not
 	 * designate a valid Symphony Object).
 	 */
-	public boolean register(final Class<?> klazz, final Properties prop, final List<String> techProp) {
+	public boolean register(final Class<?> klazz, final Properties prop, final List<Class<? extends TechnicalComponent>> techProp) {
 		properties.put(klazz, prop) ;
 		instances_m.put(klazz, new TreeMap<Integer, EntityObject>()) ;
 		

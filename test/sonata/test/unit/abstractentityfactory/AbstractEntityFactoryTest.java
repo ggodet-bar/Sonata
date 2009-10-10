@@ -15,6 +15,7 @@ import java.util.Properties;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.sonata.framework.common.TechnicalComponent;
 import org.sonata.framework.common.entity.AbstractEntityFactory;
 import org.sonata.framework.common.entity.EntityObjectServices;
 
@@ -143,8 +144,14 @@ public class AbstractEntityFactoryTest {
 	
 	@Test
 	public void shouldRegisterComponentWithTechnicalInterface() {
-		List<String> techConfig = new ArrayList<String>() ;
-		techConfig.add("sonata.test.unit.abstractentityfactory.sampleobjectwithtechnicalcomponent.TechnicalImplementation") ;
+		ClassLoader loader = Thread.currentThread().getContextClassLoader() ;
+		List<Class<? extends TechnicalComponent>> techConfig = new ArrayList<Class<? extends TechnicalComponent>>() ;
+		try {
+			techConfig.add((Class<? extends TechnicalComponent>) loader.loadClass("sonata.test.unit.abstractentityfactory.sampleobjectwithtechnicalcomponent.TechnicalImplementation")) ;
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		boolean didRegister = aFactory.register(SampleObjectWithTechnicalComponent.class, null, techConfig) ;
 		assertTrue(didRegister) ;
 		

@@ -2,28 +2,22 @@ package sonata.test.unit.loader;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Properties;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import org.sonata.framework.common.AbstractInitializer;
 import org.sonata.framework.common.InitializerDAO;
-import org.sonata.framework.common.TechnicalComponent;
 import org.sonata.framework.common.entity.AbstractEntityFactory;
-import org.sonata.framework.common.entity.EntityObject;
 
 import sonata.test.unit.abstractentityfactory.sampleobject2.SampleObject2;
+import sonata.test.unit.abstractentityfactory.sampleobjectwithtechnicalcomponent.SampleObjectWithTechnicalComponent;
+import sonata.test.unit.abstractentityfactory.sampleobjectwithtechnicalcomponent.TechnicalImplementation;
 
 
-/*
- * TODO Modifier l'initializer de manière à enregistrer les propriétés,
- * dont font partie les classes techniques
- */
-/*
- * TODO L'initializer réalise une partie de l'intégration entre Factory et
- * Invoker. On doit pouvoir factoriser la méthode register dès à présent !
- */
 public class AbstractInitializerTest {
 
 	private AbstractInitializer initializer ;
@@ -97,6 +91,44 @@ public class AbstractInitializerTest {
 		// The properties should be set for every attribute that was set
 		assertEquals("221b Baker Street, London, England", anObject.getAddress()) ;
 	}
+	
+	@Test
+	public final void testLoadTechnicalComponent() {
+		boolean hasThrownException = false ;
+		loader.addTechnicalInterface("sonata.test.unit.abstractentityfactory.sampleobjectwithtechnicalcomponent.TechnicalImplementation") ;
+		
+		// And a Symphony Object
+		loader.setSymphonyObject("sonata.test.unit.abstractentityfactory.sampleobjectwithtechnicalcomponent.SampleObjectWithTechnicalComponent") ;
+		
+		try {
+			initializer.loadTechnicalComponents() ;
+		} catch (ClassNotFoundException e) {
+			hasThrownException = true ;
+			e.printStackTrace();
+		}
+		
+		assertFalse(hasThrownException) ;
+		assertTrue(initializer.getTechnicalComponentClasses().contains(TechnicalImplementation.class)) ;
+		
+		try {
+			initializer.loadSymphonyObjects() ;
+		} catch (ClassNotFoundException e1) {
+			hasThrownException = true ;
+			e1.printStackTrace();
+		}
+		assertFalse(hasThrownException) ;
+		
+		List<String> techComponents = new ArrayList<String>() ;
+		techComponents.add("sonata.test.unit.abstractentityfactory.sampleobjectwithtechnicalcomponent.TechnicalImplementation") ;
+		
+		loader.setTechnicalConnection("sonata.test.unit.abstractentityfactory.sampleobjectwithtechnicalcomponent.SampleObjectWithTechnicalComponent", techComponents) ;
+		
+		initializer.setupFactory() ;
+		
+		SampleObjectWithTechnicalComponent sample = (SampleObjectWithTechnicalComponent) AbstractEntityFactory.getInstance().createEntity(SampleObjectWithTechnicalComponent.class) ;
+		
+		assertTrue(sample.exposeTechnicalComponent() instanceof TechnicalImplementation) ;
+	}
 
 }
 
@@ -107,44 +139,24 @@ public class AbstractInitializerTest {
  *
 /*************************************************************/
 class MyPropertiesLoader extends InitializerDAO {
-	
+		
 	public void setProperty(String name, String value) {
-		this.theProperties.setProperty(name, value) ;
+		theProperties.setProperty(name, value) ;
 	}
-	
+
+	public void setTechnicalConnection(String objectName,
+			List<String> techComponents) {
+		technicalConnections.put(objectName, techComponents) ;
+		
+	}
+
 	public void setSymphonyObject(String soName) {
 		if (!soNames.contains(soName)) {
 			soNames.add(soName) ;
 		}
 	}
+	
+	public void addTechnicalInterface(String interfaceName) {
+		technicalComponents.add(interfaceName) ;
+	}
 }
-
-/*************************************************************
- * 
- * 		HERE BE TEST CLASSES
- *
-/*************************************************************/
-
-//interface SampleObject2 {
-//	void setAddress(String address) ;
-//	String getAddress() ;
-//}
-//
-//class SampleObject2Impl implements SampleObject2, EntityObject {
-//	String address ;
-//	
-//	public SampleObject2Impl() {
-//		
-//	}
-//	
-//	@Override
-//	public String getAddress() {
-//		return address ;
-//	}
-//	
-//	@Override
-//	public void setAddress(String address) {
-//		this.address = address ;
-//	}
-//}
-
