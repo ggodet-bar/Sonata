@@ -69,17 +69,6 @@ public class AbstractInitializer {
 		return objectProperties_m.get(getClass(objectName)) ;
 	}
 	
-	private Class<?> getClass(String theClassName) {
-		for (Class<?> aClass : soClasses) {
-			String[] classParts = aClass.getName().split("\\.") ;
-			String aClassName = classParts[classParts.length -1] ;
-			if (aClassName.equals(theClassName)) {
-				return aClass ;
-			}
-		}
-		return null ;
-	}
-	
 	public List<Class<? extends TechnicalComponent>> getTechnicalComponentClasses() {
 		return technicalComponentClasses ;
 	}
@@ -116,7 +105,15 @@ public class AbstractInitializer {
 		}
 	}
 
-
-
+	private Class<?> getClass(String theClassName) {
+		for (Class<?> aClass : soClasses) {
+			String[] classParts = aClass.getName().split("\\.") ;
+			String aClassName = classParts[classParts.length -1] ;
+			if (aClassName.equals(theClassName)) {
+				return aClass ;
+			}
+		}
+		return null ;
+	}
 
 }
