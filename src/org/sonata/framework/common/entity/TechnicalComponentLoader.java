@@ -38,24 +38,12 @@ class TechnicalComponentLoader {
 	 * Throws IllegalSymphonyComponent if the scanning of the namespace fails for some
 	 * reason.
 	 * @param klazz a Symphony Object interface
-	 * @param XXX
+	 * @param components
 	 * @throws IllegalSymphonyComponent
 	 * @throws ClassNotFoundException 
 	 */
-	public void registerTechnicalInterfaces(Class<?> klazz, List<Class<? extends TechnicalComponent>> components) throws IllegalSymphonyComponent, ClassNotFoundException {
-//		ClassLoader classLoader = Thread.currentThread().getContextClassLoader() ;
-//		
+	public void registerTechnicalInterfaces(Class<?> klazz, List<Class<? extends TechnicalComponent>> components) throws IllegalSymphonyComponent, ClassNotFoundException {	
 		technicalInterfaces.put(klazz, listInterfaces(klazz)) ;
-//		
-//		if (technicalProperties != null) {
-//			List<Class<? extends TechnicalComponent>> theComponents = new ArrayList<Class<? extends TechnicalComponent>>() ;
-//			for (String aClassName : technicalProperties) {
-//				Class<? extends TechnicalComponent> aClass = (Class<? extends TechnicalComponent>) classLoader.loadClass(aClassName) ;
-//				theComponents.add(aClass) ;
-//			}
-//			technicalComponents.put(klazz, theComponents) ;
-//		}
-		
 		technicalComponents.put(klazz, components) ;
 	}
 	
