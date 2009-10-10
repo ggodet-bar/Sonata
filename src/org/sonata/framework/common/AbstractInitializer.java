@@ -19,11 +19,9 @@ public class AbstractInitializer {
 	private Map<Class<?>, Properties> objectProperties_m;
 	private List<Class<?>> soClasses ;
 	private List<Class<? extends TechnicalComponent>> technicalComponentClasses ;
-	private Map<Class<?>, List<Class<?>>> objectTechComponents_m ;
 	
 	public AbstractInitializer(InitializerDAO aDAO) {
 		objectProperties_m = new HashMap<Class<?>, Properties>() ;
-		objectTechComponents_m = new HashMap<Class<?>, List<Class<?>>>() ;
 		dao = aDAO ;
 		soClasses = new ArrayList<Class<?>>() ;
 		technicalComponentClasses = new ArrayList<Class<? extends TechnicalComponent>>() ;
@@ -66,15 +64,6 @@ public class AbstractInitializer {
 			technicalComponentClasses.add((Class<? extends TechnicalComponent>) classLoader.loadClass(aComponentName)) ;
 		}
 	}
-
-//	public void loadTechnicalConnections() {
-//		Map<String, List<String>> component_m = dao.getTechnicalConnections() ;
-//		for (String aComponentName : component_m.keySet()) {
-//			// First w
-//			List<String> componentNames = component_m.get(aComponentName) ;
-//		}
-//		
-//	}
 	
 	public Properties getProperties(String objectName) {
 		return objectProperties_m.get(getClass(objectName)) ;
@@ -109,13 +98,10 @@ public class AbstractInitializer {
 				tmpTechComponents = new ArrayList<Class<? extends TechnicalComponent>>() ;
 				
 				for (String aTechCompName : component_m.get(aClass.getName())) {
-					// TODO Verify (assume?) that the technical class is already loaded
-					
-//					Class<? extends TechnicalComponent> loadedTechClass = null ;
+					// Verify (assume?) that the technical class is already loaded
 					
 					for (Class<? extends TechnicalComponent> aTechClass : technicalComponentClasses) {
 						if (aTechClass.getName().equals(aTechCompName)) {
-//							loadedTechClass = aTechClass ;
 							tmpTechComponents.add(aTechClass) ;
 							break ;
 						}
