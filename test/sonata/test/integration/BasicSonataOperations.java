@@ -13,6 +13,8 @@ import org.sonata.framework.common.entity.AbstractEntityFactory;
 import org.sonata.framework.common.entity.EntityObject;
 import org.sonata.framework.common.process.ProcessObject;
 
+import sonata.test.unit.abstractentityfactory.sampleobject2.SampleObject2;
+
 /*
  * 
  * TODO Should test the request getProxy method for correctness
@@ -50,54 +52,6 @@ public class BasicSonataOperations {
 
 class AnyObject implements SymphonyObject {
 	
-}
-
-///////////////////////////////////////////////////////////////
-
-interface SampleObject2 {
-	String address() ;
-}
-
-class SampleObject2Impl implements SampleObject2, EntityObject {
-	String address ;
-	
-	public SampleObject2Impl(Properties prop) {
-		if (prop != null) {
-			address = prop.getProperty("address") ;
-		}
-	}
-	
-	@Override
-	public String address() {
-		return address ;
-	}
-}
-
-///////////////////////////////////////////////////////////////
-
-interface SampleObject {
-	String username();
-
-	void triggeringCall() ;
-}
-
-class SampleObjectImpl implements SampleObject, EntityObject {
-	private String username ;
-	
-	public SampleObjectImpl(Properties prop) {
-		if (prop != null) {
-			username = prop.getProperty("username") ;
-		}
-	}
-	
-	public String username() {
-		return username ;
-	}
-
-	@Override
-	public void triggeringCall() {
-		
-	}
 }
 
 ///////////////////////////////////////////////////////////////

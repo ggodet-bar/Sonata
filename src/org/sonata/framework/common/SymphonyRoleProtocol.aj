@@ -23,6 +23,7 @@ public aspect SymphonyRoleProtocol {
 	}
 
 	public EntityObject SymphonyRoleServices.search(int objectID) {
+		// TODO Should be implemented!!
 		return null ;
 	}
 }

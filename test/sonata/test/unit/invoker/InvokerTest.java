@@ -110,14 +110,14 @@ public class InvokerTest extends TestCase {
 	public final void testDontBindEmptyConnections() {
 		loadConnection() ;
 		
-		// The Invoker should register valid objects
+		// The Invoker should bin valid objects
 		SampleObject sample = new SampleObjectImpl() ;
-		boolean isObjectRegistered = theInvoker.bind((SymphonyObject) sample) ;
-		assertFalse(isObjectRegistered) ;
+		boolean isObjectBounded = theInvoker.bind((SymphonyObject) sample) ;
+		assertFalse(isObjectBounded) ;
 		
 		SampleObject2 sample2 = new SampleObject2Impl() ;
-		isObjectRegistered = theInvoker.bind((SymphonyObject) sample2) ;
-		assertFalse(isObjectRegistered) ;
+		isObjectBounded = theInvoker.bind((SymphonyObject) sample2) ;
+		assertFalse(isObjectBounded) ;
 		
 		// Note that, even though both objects are described as part of a connection,
 		// the binding occurs only if a SampleObject2 is created in the context of 

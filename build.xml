@@ -1,6 +1,6 @@
 <project xmlns:aspectj="antlib:org.aspectj">
 	<property name="lib.dir" value="lib" />
-	<property name="version" value="0.8" />
+	<property name="version" value="0.9" />
 	<property name="test.dir" value="test" />
 	<property name="src.dir" value="src" />
 	<property name="bin.dir" value="bin" />

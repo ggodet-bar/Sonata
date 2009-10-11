@@ -18,7 +18,7 @@ public class SampleObjectAspect {
 	
 	Request req ;
 	
-	@Pointcut("execution(public * SampleObject.*(..))")
+	@Pointcut("execution(public * sonata.test.unit.abstractentityfactory.sampleobject.SampleObject.*(..))")
 	void SampleObjectCalls() {}
 
 	@AfterReturning(pointcut = "execution(Object AbstractEntityFactory.createEntity(Class<?>)) && args(theClass)", returning ="newObject")

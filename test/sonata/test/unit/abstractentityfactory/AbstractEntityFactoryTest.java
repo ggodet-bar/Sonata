@@ -2,6 +2,7 @@ package sonata.test.unit.abstractentityfactory;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -144,14 +145,17 @@ public class AbstractEntityFactoryTest {
 	
 	@Test
 	public void shouldRegisterComponentWithTechnicalInterface() {
+		boolean classLoadingRaisedException = false ;
 		ClassLoader loader = Thread.currentThread().getContextClassLoader() ;
 		List<Class<? extends TechnicalComponent>> techConfig = new ArrayList<Class<? extends TechnicalComponent>>() ;
 		try {
 			techConfig.add((Class<? extends TechnicalComponent>) loader.loadClass("sonata.test.unit.abstractentityfactory.sampleobjectwithtechnicalcomponent.TechnicalImplementation")) ;
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+			classLoadingRaisedException = true ;
 			e.printStackTrace();
 		}
+		assertFalse(classLoadingRaisedException) ;
+		
 		boolean didRegister = aFactory.register(SampleObjectWithTechnicalComponent.class, null, techConfig) ;
 		assertTrue(didRegister) ;
 		
