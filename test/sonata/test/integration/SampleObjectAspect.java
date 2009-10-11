@@ -21,10 +21,11 @@ public class SampleObjectAspect {
 	@Pointcut("execution(public * sonata.test.unit.abstractentityfactory.sampleobject.SampleObject.*(..))")
 	void SampleObjectCalls() {}
 
-	@AfterReturning(pointcut = "execution(Object AbstractEntityFactory.createEntity(Class<?>)) && args(theClass)", returning ="newObject")
+	@AfterReturning(pointcut = "execution(Object AbstractEntityFactory+.createEntity(Class<?>)) && args(theClass)", returning ="newObject")
 	public void after(Class<?> theClass, Object newObject) {
 		if (newObject instanceof SampleObject) {
 			System.out.println("There was a call for creating an entity " + ((EntityObjectServices)newObject).getID()) ;
+			BasicSonataOperations.aspectConnectionCounter++ ;
 		}
 	}
 	
@@ -32,12 +33,30 @@ public class SampleObjectAspect {
 	public void after(SampleObject target)  {
 		try{
 			req = Invoker.getInstance().createRequest((EntityObject)target, "translateCall");
-
 			Invoker.getInstance().sendRequest();
 			} catch (Exception e) {
 				e.printStackTrace();
-			}
-			
-		}
+			}		
+	}
+	
+	@After("SampleObjectCalls() && execution(void triggerTechnicalCall()) && target(target)")
+	public void after2(SampleObject target)  {
+		try{
+			req = Invoker.getInstance().createRequest((EntityObject)target, "technicalComponentCall");
+			Invoker.getInstance().sendRequest();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}		
+	}
+
+	@After("SampleObjectCalls() && execution(void triggerBothCall()) && target(target)")
+	public void after3(SampleObject target)  {
+		try{
+			req = Invoker.getInstance().createRequest((EntityObject)target, "bothCall");
+			Invoker.getInstance().sendRequest();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}		
+	}
 	
 }

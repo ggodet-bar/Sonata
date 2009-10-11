@@ -13,8 +13,15 @@
 	
 	<path id="classpath">
 		<fileset dir="${lib.dir}" includes="**/*.jar"/>
-		<pathelement location="${jsonpath}" />
 		<fileset file="${aspectjpath}/lib/aspectjrt.jar" />
+	</path>
+	
+	<path id="testClasspath">
+		<fileset dir="${lib.dir}" includes="**/*.jar"/>
+		<pathelement location="${bin.dir}" />
+		<fileset file="${aspectjpath}/lib/aspectjrt.jar" />
+		
+		<fileset file="${junitpath}/junit.jar" />
 	</path>
 	
 	<target name = "doc">
@@ -29,13 +36,14 @@
 		<delete dir = "doc" />
 	</target>
 
-	<target name="compile">
+	<target name="compile" depends="clean">
 		<mkdir dir="bin" />
 		<!-- Capture the path as a delimited property using the refid attribute -->
 		<property name="myclasspath" refid="classpath"/>
 		<!-- Emit the property to the ant console -->
-		<echo message="Classpath = ${myclasspath}"/>
-		<aspectj:iajc srcdir="src" destDir="bin" classpathref="classpath" source="1.6" target="1.6"/>
+		<!-- <echo message="Classpath = ${myclasspath}"/> -->
+		<echo message="Compiling framework" />
+		<aspectj:iajc sourceRoots="src" destDir="bin" classpathref="classpath" source="1.6" target="1.6"/>
 	</target>
 	
 	<target name="jar" depends="compile">
@@ -51,13 +59,14 @@
 	<target name="test" description="Execute all the unit and integration tests" depends="compile">
 		<mkdir dir="report"/>
 		<echo message = "Java version: ${ant.java.version}" />
+		<!-- <echo message="Compiling tests" />
+		<aspectj:iajc sourceRoots="test" destDir="bin" classpathref="testClasspath" source="1.6" target="1.6" showWeaveInfo="true" />
+		-->
 		<junit fork="true" printsummary="true" failureproperty="junit.failure" haltonfailure="yes">
-		  <classpath>
-		  	<path refid="classpath" />
-			<pathelement location="${junitpath}/junit.jar"/>
-		  	<pathelement path="${bin.dir}" />
-		  </classpath>
-		  <formatter type="plain" />
+		<classpath>
+			<path refid="testClasspath" />
+		</classpath>
+			<formatter type="plain" />
 		  <test name="sonata.test.unit.SonataTestSuite" todir="${report.dir}"/>
 		</junit>
 	</target>

@@ -24,6 +24,16 @@ public class SampleObjectImpl implements SampleObject, EntityObject {
 	}
 
 	@Override
+	public void triggerTechnicalCall() {
+		
+	}
+	
+	@Override
+	public void triggerBothCall() {
+		
+	}
+	
+	@Override
 	public int getAge() {
 		return age ;
 	}

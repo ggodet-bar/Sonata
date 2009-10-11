@@ -2,9 +2,9 @@
 <aspectj>
 	<aspects>
 		<aspect name="org.sonata.framework.common.entity.EntityObjectProtocol"/>
-		<aspect name="org.sonata.framework.control.invoker.CommunicationOIOM"/>
+		<aspect name="org.sonata.framework.common.entity.SymphonyRoleProtocol"/>
 		<concrete-aspect name="org.sonata.framework.common.__MyPrecedence" 
-			precedence="org.sonata.framework.common.entity.EntityObjectProtocol, org.sonata.framework.control.invoker.CommunicationOIOM, *" />
+			precedence="org.sonata.framework.common.entity.EntityObjectProtocol, org.sonata.framework.common.entity.SymphonyRoleProtocol, *" />
 	</aspects>
 	<weaver options="-showWeaveInfo -verbose">
     	<include within="business..*"/>

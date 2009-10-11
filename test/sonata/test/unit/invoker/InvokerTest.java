@@ -258,8 +258,13 @@ public class InvokerTest extends TestCase {
 		
 		assertTrue(isExceptionThrown) ;
 	}
-
 }
+
+/*************************************************************
+ * 
+ * 		HERE BE UTILITY CLASSES
+ *
+/*************************************************************/
 
 class ConnectionLoader extends InvokerDAO {
 	

@@ -45,7 +45,7 @@ public class Invoker {
 	
 	private static final Logger logger = Logger.getLogger("control.invoker.Invoker") ;
 	
-	private static Invoker instance ;
+	protected static Invoker instance ;
 	
 	/**
 	 * Liste des Objets Symphony enregistrés auprès de l'Invoker (Objets Entité

@@ -8,6 +8,10 @@ public interface SampleObject {
 	void setUsername(String username) ;
 
 	void triggeringCall() ;
+	
+	void triggerTechnicalCall() ;
+	
+	void triggerBothCall() ;
 
 	int getAge();
 	

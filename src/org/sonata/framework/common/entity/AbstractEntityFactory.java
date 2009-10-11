@@ -13,9 +13,12 @@ import org.sonata.framework.common.TechnicalComponent;
 import org.sonata.framework.control.exceptions.IllegalSymphonyComponent;
 import org.sonata.framework.control.invoker.Invoker;
 
+/*
+ * TODO Maybe the createEntity call should throw an exception...
+ */
 public class AbstractEntityFactory {
 	
-	private static AbstractEntityFactory instance;
+	protected static AbstractEntityFactory instance;
 	private static int counter = 1 ;
 	private Map<Class<?>, Properties> properties ;
 	private ClassLoader	classLoader ;
@@ -80,9 +83,10 @@ public class AbstractEntityFactory {
 	 * corresponding class <code>klazz</code>.
 	 * @param object the element which is registered in the factory
 	 */
-	public void add(final Class<?> klazz, final EntityObject object) {
+	public EntityObject add(final Class<?> klazz, final EntityObject object) {
 		Map<Integer, EntityObject> theInstances = instances_m.get(klazz) ;
-		theInstances.put(((EntityObjectServices)object).getID(), object) ;
+		if (theInstances == null) return null ;
+		return theInstances.put(((EntityObjectServices)object).getID(), object) ;
 	}
 	
 

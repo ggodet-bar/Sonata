@@ -17,8 +17,8 @@ import sonata.test.unit.xmlinvokerdao.XMLInvokerDAOTest;
 		InvokerTest.class,
 		XMLInvokerDAOTest.class,
 		JSONInvokerDAOTest.class,
-		AbstractInitializerTest.class
-//		BasicSonataOperations.class
+		AbstractInitializerTest.class,
+		BasicSonataOperations.class
 		})
 		
 public class SonataTestSuite {}

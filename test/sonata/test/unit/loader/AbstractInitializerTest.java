@@ -31,22 +31,19 @@ public class AbstractInitializerTest {
 
 	@Test
 	public final void testLoadSymphonyObjects() {
-		boolean hasThrownException = false ;
 		loader.setSymphonyObject("sonata.test.unit.abstractentityfactory.sampleobject2.SampleObject2") ;
 		
 		try {
 			initializer.loadSymphonyObjects() ;
 		} catch (ClassNotFoundException e) {
-			hasThrownException = true ;
+			fail("Exception was thrown!!") ;
 			e.printStackTrace();
 		}
 		
-		assertFalse(hasThrownException) ;
 	}
 	
 	@Test
 	public final void testBasicProperties() {
-		boolean exceptionWasThrown = false ;
 		// The following BDD approach is somewhat idiomatic, but hey, it helped!
 		
 		// As a user of the framework, I want to be able to define a set of properties,
@@ -62,19 +59,17 @@ public class AbstractInitializerTest {
 		try {
 			initializer.loadSymphonyObjects() ;
 		} catch (ClassNotFoundException e1) {
-			exceptionWasThrown = true ;
+			fail("Exception was thrown!!") ;
 			e1.printStackTrace();
 		}
-		assertFalse(exceptionWasThrown) ;
 		
 		// And we load the properties
 		try {
 			initializer.loadProperties() ;
 		} catch (ClassNotFoundException e) {
-			exceptionWasThrown = true ;
+			fail("Exception was thrown!!") ;
 			e.printStackTrace();
 		}
-		assertFalse(exceptionWasThrown) ;
 		
 		// Then every set of properties should be associated with the right Symphony Object
 		Properties objectProperties = initializer.getProperties("SampleObject2") ;
@@ -94,7 +89,6 @@ public class AbstractInitializerTest {
 	
 	@Test
 	public final void testLoadTechnicalComponent() {
-		boolean hasThrownException = false ;
 		loader.addTechnicalInterface("sonata.test.unit.abstractentityfactory.sampleobjectwithtechnicalcomponent.TechnicalImplementation") ;
 		
 		// And a Symphony Object
@@ -103,20 +97,18 @@ public class AbstractInitializerTest {
 		try {
 			initializer.loadTechnicalComponents() ;
 		} catch (ClassNotFoundException e) {
-			hasThrownException = true ;
+			fail("Exception was thrown!!") ;
 			e.printStackTrace();
 		}
 		
-		assertFalse(hasThrownException) ;
 		assertTrue(initializer.getTechnicalComponentClasses().contains(TechnicalImplementation.class)) ;
 		
 		try {
 			initializer.loadSymphonyObjects() ;
 		} catch (ClassNotFoundException e1) {
-			hasThrownException = true ;
+			fail("Exception was thrown!!") ;
 			e1.printStackTrace();
 		}
-		assertFalse(hasThrownException) ;
 		
 		List<String> techComponents = new ArrayList<String>() ;
 		techComponents.add("sonata.test.unit.abstractentityfactory.sampleobjectwithtechnicalcomponent.TechnicalImplementation") ;
