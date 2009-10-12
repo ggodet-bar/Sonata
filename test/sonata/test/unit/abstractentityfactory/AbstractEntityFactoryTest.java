@@ -39,13 +39,13 @@ public class AbstractEntityFactoryTest {
 	@Before
 	public void setUp() throws Exception {
 		// Using an anonymous subclass for bypassing the singleton mechanism
-		aFactory = new AbstractEntityFactory() {};
+		aFactory = MyFactory.getInstance() ;
 		
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		aFactory = null ;
+		MyFactory.resetInstance() ;
 	}
 	
 	/**
@@ -244,4 +244,8 @@ public class AbstractEntityFactoryTest {
 	}
 }
 
-
+class MyFactory extends AbstractEntityFactory {
+	public static void resetInstance() {
+		instance = null ;
+	}
+}

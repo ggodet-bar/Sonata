@@ -258,6 +258,11 @@ public class InvokerTest extends TestCase {
 		
 		assertTrue(isExceptionThrown) ;
 	}
+	
+//	@Test
+//	public final void testShouldTalkToProcessObjectWhenNonUnitTesting(){
+//		fail("Not yet implemented!") ;
+//	}
 }
 
 /*************************************************************

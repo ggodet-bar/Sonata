@@ -54,7 +54,12 @@ class TechnicalComponentLoader {
 	 * @return the list of interfaces
 	 */
 	public List<Class<? extends TechnicalComponent>> getTechnicalInterfacesForSO(Class<?> klazz) {
-		return Collections.unmodifiableList(technicalInterfaces.get(klazz)) ;
+		List<Class<? extends TechnicalComponent>> tmpList = technicalInterfaces.get(klazz) ;
+		if (tmpList == null) {
+			return null ;
+		} else {
+			return Collections.unmodifiableList(technicalInterfaces.get(klazz)) ;
+		}
 	}
 
 	public EntityObject setupTechnicalComponents(Class<?> klazz, EntityObject instance) throws InstantiationException, IllegalAccessException {
@@ -90,14 +95,18 @@ class TechnicalComponentLoader {
 		
 		List<String> classNames = scanSubDirectories(baseDir, namespace) ;
 		for (String aClassName : classNames) {
+			Class<?> theClass = null ;
 			try {
-				Class<?> theClass = Thread.currentThread().getContextClassLoader().loadClass(aClassName) ;
-				if (TechnicalComponent.class.isAssignableFrom(theClass) && theClass.isInterface()) {
-					technicalInterfaces.add((Class<? extends TechnicalComponent>) theClass) ;
-				}
+				theClass = Thread.currentThread().getContextClassLoader().loadClass(aClassName) ;
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
+				theClass = null ;
 				e.printStackTrace();
+			}
+			
+			if (theClass != null && 
+					TechnicalComponent.class.isAssignableFrom(theClass) &&
+					theClass.isInterface()) {
+				technicalInterfaces.add((Class<? extends TechnicalComponent>) theClass) ;
 			}
 		}
 		return technicalInterfaces;
@@ -147,7 +156,10 @@ class TechnicalComponentLoader {
 			if (aFile.isDirectory()) {
 				recScanSubDirectories(aFile, result, currentNamespace + "." + aFile.getName()) ;
 			} else {
-				result.add(currentNamespace + "." + aFile.getName().split("\\.")[0]) ;
+				
+				if (aFile.getName().split("\\.").length == 2 && aFile.getName().split("\\.")[1].equals("class")) {
+					result.add(currentNamespace + "." + aFile.getName().split("\\.")[0]) ;
+				}
 			}
 		}
 		

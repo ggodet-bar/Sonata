@@ -37,6 +37,7 @@ public class AbstractEntityFactory {
 		classLoader = Thread.currentThread().getContextClassLoader() ;
 		injector = new PropertyInjector() ;
 		techCompLoader = new TechnicalComponentLoader() ;
+//		TechnicalComponentWeaver.setTechnicalComponentLoader(techCompLoader) ;
 	}
 	
 	/**
@@ -66,14 +67,16 @@ public class AbstractEntityFactory {
 		properties.put(klazz, prop) ;
 		instances_m.put(klazz, new TreeMap<Integer, EntityObject>()) ;
 		
-		try {
-			techCompLoader.registerTechnicalInterfaces(klazz, techProp) ;
-		} catch (IllegalSymphonyComponent e) {
-			e.printStackTrace();
-			return false ;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			return false ;
+		if (techProp != null && !techProp.isEmpty()) {
+			try {
+				techCompLoader.registerTechnicalInterfaces(klazz, techProp) ;
+			} catch (IllegalSymphonyComponent e) {
+				e.printStackTrace();
+				return false ;
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+				return false ;
+			}
 		}
 		return true ;
 	}
@@ -128,11 +131,13 @@ public class AbstractEntityFactory {
 			try {
 				constructor = (Constructor<EntityObject>) classLoader.loadClass(klazz.getName() + "Impl").getConstructor();
 				Properties prop = properties.get(klazz) ;
+//				TechnicalComponentWeaver.setInjectionType(klazz) ;
 				anInstance = constructor.newInstance() ;
+//				anInstance = techCompLoader.setupTechnicalComponents(klazz, anInstance) ;
 				if (prop != null) {
 					anInstance = injector.inject(klazz, anInstance, prop) ;
 				}
-				anInstance = techCompLoader.setupTechnicalComponents(klazz, anInstance) ;
+				
 
 			} catch (SecurityException e) {
 				// TODO Auto-generated catch block
