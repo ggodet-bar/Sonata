@@ -172,7 +172,6 @@ public class InvokerTest extends TestCase {
 	
 	@Test
 	public final void testRequestWithUniformParameters() {
-		boolean exceptionNotThrown = true ;
 		Request req ;
 		loadConnection() ;
 		SampleObject sample = new SampleObjectImpl() ;
@@ -186,17 +185,16 @@ public class InvokerTest extends TestCase {
 			boolean requestDidSucceed = theInvoker.sendRequest() ;
 			assertTrue(requestDidSucceed) ;
 		} catch (RequestOverlapException e) {
-			exceptionNotThrown = false ;
+			fail("Exception was thrown!");
 			e.printStackTrace() ;
 		} catch (NoSuchMethodException e) {
-			exceptionNotThrown = false ;
+			fail("Exception was thrown!");
 			e.printStackTrace() ;
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
+			fail("Exception was thrown!");
 			e.printStackTrace();
 		}
 		
-		assertTrue(exceptionNotThrown) ;
 	}
 	
 	/**
@@ -223,12 +221,12 @@ public class InvokerTest extends TestCase {
 			boolean requestDidSucceed = theInvoker.sendRequest() ;
 			assertTrue(requestDidSucceed) ;
 		} catch (RequestOverlapException e) {
-			e.printStackTrace() ;
+			fail("Wrong exception was thrown!");
 		} catch (NoSuchMethodException e) {
 			exceptionThrown = true ;
 			e.printStackTrace() ;
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
+			fail("Wrong exception was thrown!");
 			e.printStackTrace();
 		}
 		
@@ -247,8 +245,10 @@ public class InvokerTest extends TestCase {
 			boolean requestDidSucceed = theInvoker.sendRequest() ;
 			assertFalse(requestDidSucceed) ;
 		} catch (RequestOverlapException e) {
+			fail("Wrong exception was thrown!");
 			e.printStackTrace() ;
 		} catch (NoSuchMethodException e) {
+			fail("Wrong exception was thrown!");
 			e.printStackTrace() ;
 		} catch (InvocationTargetException e) {
 			isExceptionThrown = true ;

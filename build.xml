@@ -20,7 +20,6 @@
 		<fileset dir="${lib.dir}" includes="**/*.jar"/>
 		<pathelement location="${bin.dir}" />
 		<fileset file="${aspectjpath}/lib/aspectjrt.jar" />
-		
 		<fileset file="${junitpath}/junit.jar" />
 	</path>
 	
@@ -56,11 +55,11 @@
 		</jar>
 	</target>
 
-	<target name="test" description="Execute all the unit and integration tests" depends="compile">
+	<target name="test" description="Execute all the unit and integration tests">
 		<mkdir dir="report"/>
 		<echo message = "Java version: ${ant.java.version}" />
 		<!-- <echo message="Compiling tests" />
-		<aspectj:iajc sourceRoots="test" destDir="bin" classpathref="testClasspath" source="1.6" target="1.6" showWeaveInfo="true" />
+		<aspectj:iajc sourceRoots="test" destDir="bin" inpath="bin" classpathRef="testClasspath" source="1.6" target="1.6" showWeaveInfo="true" fork="true"/>
 		-->
 		<junit fork="true" printsummary="true" failureproperty="junit.failure" haltonfailure="yes">
 		<classpath>

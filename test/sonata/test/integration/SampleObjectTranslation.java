@@ -19,13 +19,18 @@ public class SampleObjectTranslation extends ConnectionTranslation {
 	}
 	
 	public void technicalComponentCall() {
-		SampleObjectWithTechnicalComponent o = (SampleObjectWithTechnicalComponent) BasicSonataOperations.theFactory.createEntity(SampleObjectWithTechnicalComponent.class) ;
+		SampleObjectWithTechnicalComponent o = 
+			(SampleObjectWithTechnicalComponent) BasicSonataOperations.theFactory.
+			createEntity(SampleObjectWithTechnicalComponent.class) ;
 		BasicSonataOperations.technicalComponent = o.exposeTechnicalComponent() ;
 	}
 	
 	public void bothCall() {
-		SampleObject2 o1 = (SampleObject2) BasicSonataOperations.theFactory.createEntity(SampleObject2.class) ;
-		SampleObjectWithTechnicalComponent o2 = (SampleObjectWithTechnicalComponent) BasicSonataOperations.theFactory.createEntity(SampleObjectWithTechnicalComponent.class) ;
+		SampleObject2 o1 = (SampleObject2) BasicSonataOperations.theFactory
+			.createEntity(SampleObject2.class) ;
+		SampleObjectWithTechnicalComponent o2 = 
+			(SampleObjectWithTechnicalComponent) BasicSonataOperations.theFactory.
+			createEntity(SampleObjectWithTechnicalComponent.class) ;
 		
 		BasicSonataOperations.address = o1.getAddress() ;
 		BasicSonataOperations.technicalComponent = o2.exposeTechnicalComponent() ;
