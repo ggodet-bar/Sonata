@@ -9,7 +9,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
+import org.sonata.framework.common.PropertyInjector;
 import org.sonata.framework.common.TechnicalComponent;
+import org.sonata.framework.common.TechnicalComponentLoader;
 import org.sonata.framework.control.exceptions.IllegalSymphonyComponent;
 import org.sonata.framework.control.invoker.Invoker;
 
@@ -37,7 +39,6 @@ public class AbstractEntityFactory {
 		classLoader = Thread.currentThread().getContextClassLoader() ;
 		injector = new PropertyInjector() ;
 		techCompLoader = new TechnicalComponentLoader() ;
-//		TechnicalComponentWeaver.setTechnicalComponentLoader(techCompLoader) ;
 	}
 	
 	/**
@@ -131,9 +132,7 @@ public class AbstractEntityFactory {
 			try {
 				constructor = (Constructor<EntityObject>) classLoader.loadClass(klazz.getName() + "Impl").getConstructor();
 				Properties prop = properties.get(klazz) ;
-//				TechnicalComponentWeaver.setInjectionType(klazz) ;
 				anInstance = constructor.newInstance() ;
-//				anInstance = techCompLoader.setupTechnicalComponents(klazz, anInstance) ;
 				if (prop != null) {
 					anInstance = injector.inject(klazz, anInstance, prop) ;
 				}

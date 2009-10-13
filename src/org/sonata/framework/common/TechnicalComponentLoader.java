@@ -1,4 +1,4 @@
-package org.sonata.framework.common.entity;
+package org.sonata.framework.common;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +10,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.sonata.framework.common.TechnicalComponent;
+import org.sonata.framework.common.entity.EntityObject;
+import org.sonata.framework.common.entity.EntityObjectServices;
+import org.sonata.framework.common.process.ProcessObject;
+import org.sonata.framework.common.process.ProcessObjectServices;
 import org.sonata.framework.control.exceptions.IllegalSymphonyComponent;
 
 /**
@@ -18,7 +21,7 @@ import org.sonata.framework.control.exceptions.IllegalSymphonyComponent;
  * @author Guillaume Godet-Bar
  *
  */
-class TechnicalComponentLoader {
+public class TechnicalComponentLoader {
 	
 	/**
 	 * The map that associates the Object Symphony interfaces with the list
@@ -62,7 +65,7 @@ class TechnicalComponentLoader {
 		}
 	}
 
-	public EntityObject setupTechnicalComponents(Class<?> klazz, EntityObject instance) throws InstantiationException, IllegalAccessException {
+	public SymphonyObject setupTechnicalComponents(Class<?> klazz, SymphonyObject instance) throws InstantiationException, IllegalAccessException {
 		if (!technicalComponents.containsKey(klazz) || technicalComponents.get(klazz) == null) return instance ;
 		for (Class<? extends TechnicalComponent> aComponentInterface : technicalComponents.get(klazz)) {
 			// Get the actual component that implements the interface
@@ -70,7 +73,11 @@ class TechnicalComponentLoader {
 			
 			for (Class<? extends TechnicalComponent> anInterface : technicalInterfaces.get(klazz)) {
 				if (Arrays.asList(aComponent.getClass().getInterfaces()).contains(anInterface)) {
-					((EntityObjectServices)instance).setTechnicalComponentInstance(anInterface, aComponent) ;
+					if (instance instanceof EntityObject) {
+						((EntityObjectServices)instance).setTechnicalComponentInstance(anInterface, aComponent) ;
+					} else if (instance instanceof ProcessObject) {
+						((ProcessObjectServices)instance).setTechnicalComponentInstance(anInterface, aComponent) ;
+					}
 					break ;
 				}
 			}

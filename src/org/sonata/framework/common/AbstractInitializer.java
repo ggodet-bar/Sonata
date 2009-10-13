@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.sonata.framework.common.entity.AbstractEntityFactory;
+import org.sonata.framework.common.entity.EntityObject;
+import org.sonata.framework.common.process.AbstractProcessFactory;
+import org.sonata.framework.common.process.ProcessObject;
 import org.sonata.framework.control.invoker.Invoker;
 
 /*
@@ -19,16 +22,17 @@ public class AbstractInitializer {
 	private Map<Class<?>, Properties> objectProperties_m;
 	private List<Class<?>> soClasses ;
 	private List<Class<? extends TechnicalComponent>> technicalComponentClasses ;
+	private ClassLoader classLoader ;
 	
 	public AbstractInitializer(InitializerDAO aDAO) {
 		objectProperties_m = new HashMap<Class<?>, Properties>() ;
 		dao = aDAO ;
 		soClasses = new ArrayList<Class<?>>() ;
 		technicalComponentClasses = new ArrayList<Class<? extends TechnicalComponent>>() ;
+		classLoader = Thread.currentThread().getContextClassLoader() ;
 	}
 	
 	public void loadSymphonyObjects() throws ClassNotFoundException {
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader() ;
 		for (String soName : dao.getSymphonyObjectNames()) {
 			soClasses.add(classLoader.loadClass(soName));
 		}
@@ -59,7 +63,6 @@ public class AbstractInitializer {
 	}
 	
 	public void loadTechnicalComponents() throws ClassNotFoundException {
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader() ;
 		for (String aComponentName : dao.getTechnicalComponents()) {
 			technicalComponentClasses.add((Class<? extends TechnicalComponent>) classLoader.loadClass(aComponentName)) ;
 		}
@@ -100,8 +103,17 @@ public class AbstractInitializer {
 					
 				}
 			}
-			
-			AbstractEntityFactory.getInstance().register(aClass, objectProperties_m.get(aClass), tmpTechComponents) ;
+			Class<?> implementingClass = null;
+			try {
+				implementingClass = classLoader.loadClass(aClass.getName() + "Impl");
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			if (EntityObject.class.isAssignableFrom(implementingClass)) {
+				AbstractEntityFactory.getInstance().register(aClass, objectProperties_m.get(aClass), tmpTechComponents) ;
+			} else if (ProcessObject.class.isAssignableFrom(implementingClass)){
+				AbstractProcessFactory.getInstance().register(aClass, objectProperties_m.get(aClass), tmpTechComponents) ;
+			}
 		}
 	}
 

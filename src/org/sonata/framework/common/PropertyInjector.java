@@ -1,4 +1,4 @@
-package org.sonata.framework.common.entity;
+package org.sonata.framework.common;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -7,9 +7,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
-import org.sonata.framework.common.SymphonyObject;
 
-class PropertyInjector {
+public class PropertyInjector {
 
 	/**
 	 * 
@@ -21,7 +20,7 @@ class PropertyInjector {
 	 * were injected.
 	 * @throws NoSuchMethodException
 	 */
-	<T extends SymphonyObject> T inject(Class<?> klazz, T instance, Properties prop) throws NoSuchMethodException {
+	public <T extends SymphonyObject> T inject(Class<?> klazz, T instance, Properties prop) throws NoSuchMethodException {
 		for (Object aKey : prop.keySet()) {
 			List<String> methodNames = toMethodNames((String)aKey) ;
 			

@@ -4,6 +4,7 @@ package sonata.test.unit;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+import sample.test.testprocessobjects.ProcessObjectTest;
 import sonata.test.integration.BasicSonataOperations;
 import sonata.test.unit.abstractentityfactory.AbstractEntityFactoryTest;
 import sonata.test.unit.invoker.InvokerTest;
@@ -18,7 +19,8 @@ import sonata.test.unit.xmlinvokerdao.XMLInvokerDAOTest;
 		XMLInvokerDAOTest.class,
 		JSONInvokerDAOTest.class,
 		AbstractInitializerTest.class,
-		BasicSonataOperations.class
+		BasicSonataOperations.class,
+		ProcessObjectTest.class
 		})
 		
 public class SonataTestSuite {}
